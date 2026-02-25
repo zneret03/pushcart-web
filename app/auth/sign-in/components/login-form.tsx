@@ -11,7 +11,7 @@ import { Ban } from 'lucide-react';
 import { useAuth } from '@/services/auth/states/auth-state';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useShallow } from 'zustand/shallow';
-import { signIn } from '@/services/auth/auth.services';
+// import { signIn } from '@/services/auth/auth.services';
 
 export function LoginForm({
   className,
@@ -31,29 +31,29 @@ export function LoginForm({
 
   const router = useRouter();
 
-  const onSubmit = async ({ username, password }: SignIn): Promise<void> => {
+  const onSubmit = async ({ email, password }: SignIn): Promise<void> => {
     startTransition(async () => {
-      try {
-        const data = await signIn(username as string, password);
-
-        setUserInfo(data as UserForm);
-
-        if (data?.role === 'staff') {
-          router.push(`/staff/${data?.id}/users?page=1`);
-
-          return;
-        }
-
-        if (data?.role === 'employee') {
-          router.push(`/employee/${data?.id}/personal_management`);
-
-          return;
-        }
-
-        router.push(`/backend/${data?.id}/dashboard`);
-      } catch (error) {
-        setMessage(error as string);
-      }
+      // try {
+      //   const data = await signIn(email as string, password);
+      //
+      //   setUserInfo(data as UserForm);
+      //
+      //   if (data?.role === 'staff') {
+      //     router.push(`/staff/${data?.id}/users?page=1`);
+      //
+      //     return;
+      //   }
+      //
+      //   if (data?.role === 'employee') {
+      //     router.push(`/employee/${data?.id}/personal_management`);
+      //
+      //     return;
+      //   }
+      //
+      //   router.push(`/backend/${data?.id}/dashboard`);
+      // } catch (error) {
+      //   setMessage(error as string);
+      // }
     });
   };
 
@@ -90,12 +90,12 @@ export function LoginForm({
               id="username"
               title="Username"
               type="username"
-              placeholder="username"
-              {...register('username', {
+              placeholder="email"
+              {...register('email', {
                 required: 'field required.',
               })}
-              hasError={!!errors.username}
-              errorMessage={errors.username?.message as string}
+              hasError={!!errors.email}
+              errorMessage={errors.email?.message as string}
             />
             <div className="grid gap-2">
               <Input

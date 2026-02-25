@@ -1,3 +1,5 @@
+import { LoginForm } from "./components/login-form";
+
 export default async function SignIn() {
-  return <div>Sign in</div>;
+  return <LoginForm />;
 }
