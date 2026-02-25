@@ -27,12 +27,13 @@ $$ LANGUAGE plpgsql;
 
 CREATE TABLE profiles (
     id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+    email TEXT,
     first_name TEXT,
     last_name TEXT,
     middle_name TEXT,
     avatar_url TEXT,
     address TEXT,
-    role user_role DEFAULT 'user'::user_role NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('admin', 'user')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
