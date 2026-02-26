@@ -14,7 +14,6 @@ export default function AuthLayout({
             <div className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-md">
               <ShoppingCart className="size-4" />
             </div>
-            
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">

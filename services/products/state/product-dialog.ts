@@ -5,7 +5,7 @@ import { Products } from '@/lib/types/product';
 
 type ProductDialogType = 'add' | 'update' | 'delete' | null;
 
-export type AttendanceData = Products
+export type AttendanceData = Products;
 
 export interface ProductDialog {
   open: boolean;

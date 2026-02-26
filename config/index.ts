@@ -1,5 +1,5 @@
-import { CookieOptions, createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { CookieOptions, createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -9,7 +9,7 @@ export async function createClient() {
 
   if (!url || !key) {
     throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY',
     );
   }
 

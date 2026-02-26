@@ -1,5 +1,5 @@
-import { CookieOptions, createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { CookieOptions, createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
 const isRestrictedPath = (path: string[], pathname: string): boolean =>
   path.some((item) => pathname.startsWith(item));
@@ -14,7 +14,7 @@ export async function updateSession(request: NextRequest) {
 
   if (!url || !key) {
     throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY',
     );
   }
 
@@ -48,29 +48,27 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { data: userData } = await supabase
-    .from("users")
-    .select("role, id")
-    .eq("id", user?.id)
+    .from('users')
+    .select('role, id')
+    .eq('id', user?.id)
     .single();
 
   const baseAdminURL = `/backend/${userData?.id}`;
 
-  const protectedAdminRoutes = [
-    "dashboard",
-  ];
+  const protectedAdminRoutes = ['dashboard'];
 
-  const userRestrictedRoutes = ["/admin" ];
+  const userRestrictedRoutes = ['/admin'];
 
   const isProtected = protectedAdminRoutes.some((route) =>
     pathname.endsWith(route),
   );
 
   if (!user && isProtected) {
-    return NextResponse.redirect(new URL("/auth/sign-in", request.url));
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url));
   }
 
   if (
-    userData?.role === "admin" &&
+    userData?.role === 'admin' &&
     isRestrictedPath(userRestrictedRoutes, pathname)
   ) {
     return NextResponse.redirect(
@@ -78,7 +76,7 @@ export async function updateSession(request: NextRequest) {
     );
   }
 
-  if (user && pathname === "/auth/sign-in" && userData?.role === "admin") {
+  if (user && pathname === '/auth/sign-in' && userData?.role === 'admin') {
     return NextResponse.redirect(
       new URL(`${baseAdminURL}/dashboard`, request.url),
     );

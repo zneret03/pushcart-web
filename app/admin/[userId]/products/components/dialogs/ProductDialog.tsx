@@ -23,9 +23,7 @@ type ProductForm = Partial<Products> & {
 
 export function ProductsDialog(): JSX.Element {
   const [isPending, startTransition] = useTransition();
-  const {
-    handleSubmit,
-  } = useForm<ProductForm>();
+  const { handleSubmit } = useForm<ProductForm>();
 
   const router = useRouter();
 
@@ -52,17 +50,12 @@ export function ProductsDialog(): JSX.Element {
   const isOpenDialog = open && type === 'add';
 
   return (
-    <Dialog
-      open={isOpenDialog}
-      onOpenChange={() => toggleOpen?.(false, null)}
-    >
+    <Dialog open={isOpenDialog} onOpenChange={() => toggleOpen?.(false, null)}>
       <DialogContent className="sm:max-w-[40rem]">
         <DialogHeader>
           <DialogTitle>Product Dialog</DialogTitle>
         </DialogHeader>
-
         sample field
-
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">

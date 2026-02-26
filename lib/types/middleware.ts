@@ -1,3 +1,3 @@
-import { NextProxy } from "next/server";
+import { NextProxy } from 'next/server';
 
 export type MiddlewareFactory = (middleware: NextProxy) => NextProxy;

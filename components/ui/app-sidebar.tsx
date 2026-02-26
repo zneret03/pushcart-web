@@ -30,8 +30,6 @@ export function AppSidebar({
     navMain: adminMenus(id),
   };
 
-  console.log(email, id)
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

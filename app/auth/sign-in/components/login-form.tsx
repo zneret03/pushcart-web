@@ -36,8 +36,6 @@ export function LoginForm({
       try {
         const data = await signIn(email as string, password);
 
-        console.log(data)
-
         setUserInfo(data as UserForm);
 
         router.push(`/admin/${data?.id}/dashboard`);

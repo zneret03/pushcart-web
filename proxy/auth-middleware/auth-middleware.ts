@@ -1,5 +1,5 @@
-import { unauthorizedResponse } from "@/app/api/helpers/response";
-import { NextFetchEvent, NextProxy, NextRequest } from "next/server";
+import { unauthorizedResponse } from '@/app/api/helpers/response';
+import { NextFetchEvent, NextProxy, NextRequest } from 'next/server';
 
 export function authMiddlware(next: NextProxy) {
   return async (req: NextRequest, event: NextFetchEvent) => {
@@ -7,7 +7,7 @@ export function authMiddlware(next: NextProxy) {
       `sb-${process.env.NEXT_PUBLIC_SUPABASE_TOKEN}-auth-token`,
     );
 
-    if (req.nextUrl.pathname.startsWith("/api/protected")) {
+    if (req.nextUrl.pathname.startsWith('/api/protected')) {
       if (!isAuthenticated) {
         return unauthorizedResponse();
       }
@@ -18,5 +18,5 @@ export function authMiddlware(next: NextProxy) {
 }
 
 export const config = {
-  matcher: "/api/protected/:path*",
+  matcher: '/api/protected/:path*',
 };

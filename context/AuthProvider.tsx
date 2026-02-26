@@ -28,7 +28,7 @@ interface AuthProviderType {
 
 export const AuthContext = createContext<UserType | null>(null);
 
-export const AuthProvider = ({ children }: AuthProviderType) => {
+export function AuthProvider({ children }: AuthProviderType) {
   const [user, setUser] = useState<Users | null>(null);
   const [mount, setMount] = useState<boolean>(true);
   const { setUserInfo } = useAuth(
@@ -59,7 +59,9 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
 
       const { data, error: userError } = await supabase
         .from('profiles')
-        .select('role, id, email, first_name, last_name, middle_name, avatar_url, address')
+        .select(
+          'role, id, email, first_name, last_name, middle_name, avatar_url, address',
+        )
         .eq('id', session?.user.id)
         .single();
 
@@ -94,7 +96,7 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useUser = () => {
   const context = useContext(AuthContext);

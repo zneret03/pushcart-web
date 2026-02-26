@@ -23,7 +23,9 @@ export const signIn = async (body: SignIn) => {
 
     const { data: userData, error: userError } = await supabase
       .from('profiles')
-      .select('role, email, first_name, last_name, middle_name, avatar_url, address')
+      .select(
+        'role, email, first_name, last_name, middle_name, avatar_url, address',
+      )
       .eq('id', data.user?.id)
       .single();
 

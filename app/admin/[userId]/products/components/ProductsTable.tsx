@@ -42,9 +42,10 @@ import { Pagination as PaginationType } from '@/lib/types/pagination';
 import { useRouter, usePathname } from 'next/navigation';
 import { debounce } from 'lodash';
 import { avatarName } from '@/helpers/avatarName';
+import { Products } from '@/lib/types/product';
 
 interface AwardsData extends PaginationType {
-  products: any[];
+  products: Products[];
 }
 
 export function ProductsTable({
@@ -61,10 +62,9 @@ export function ProductsTable({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-   const { toggleOpen } = useProductDialog(
+  const { toggleOpen } = useProductDialog(
     useShallow((state) => ({ toggleOpen: state.toggleOpenDialog })),
   );
-
 
   const pathname = usePathname();
   const router = useRouter();
@@ -142,11 +142,7 @@ export function ProductsTable({
         accessorKey: 'awards_type',
         header: 'Awards Type',
         cell: function ({ row }) {
-          return (
-            <Badge variant="outline">
-              dawd
-            </Badge>
-          );
+          return <Badge variant="outline">dawd</Badge>;
         },
       },
       {
@@ -210,13 +206,11 @@ export function ProductsTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-              >
+              <DropdownMenuItem>
                 <Pencil />
                 Edit info
               </DropdownMenuItem>
-              <DropdownMenuItem
-              >
+              <DropdownMenuItem>
                 <Trash />
                 Delete
               </DropdownMenuItem>
