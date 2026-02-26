@@ -97,7 +97,7 @@ export function ProductsTable({
     () => [
       {
         accessorKey: 'users.email',
-        header: 'User',
+        header: 'Name',
         cell: function ({ row }) {
           return (
             <div className="flex items-center gap-2">
@@ -118,7 +118,7 @@ export function ProductsTable({
       },
       {
         accessorKey: 'title',
-        header: 'Award Title',
+        header: 'SKU',
         cell: function ({ row }) {
           return (
             <div className="font-medium capitalize">{row.original.title}</div>
@@ -127,7 +127,7 @@ export function ProductsTable({
       },
       {
         accessorKey: 'description',
-        header: 'Description',
+        header: 'Price',
         cell: function ({ row }) {
           return (
             <TooltipComponent value={row.original.description as string}>
@@ -140,27 +140,9 @@ export function ProductsTable({
       },
       {
         accessorKey: 'awards_type',
-        header: 'Awards Type',
+        header: 'Quantity',
         cell: function ({ row }) {
           return <Badge variant="outline">dawd</Badge>;
-        },
-      },
-      {
-        accessorKey: 'read',
-        header: 'Status',
-        cell: function ({ row }) {
-          return (
-            <Badge variant="outline" className="capitalize">
-              {!row.original.read ? 'unread' : 'read'}
-            </Badge>
-          );
-        },
-      },
-      {
-        accessorKey: 'year',
-        header: 'Year',
-        cell: function ({ row }) {
-          return <div>{row.original.year}</div>;
         },
       },
       {

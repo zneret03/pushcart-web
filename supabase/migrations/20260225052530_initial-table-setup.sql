@@ -10,6 +10,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+INSERT INTO storage.buckets (id, name, public, file_size_limit)
+VALUES ('products', 'products', TRUE, 5242880); -- 5MB limit
+
+INSERT INTO storage.buckets (id, name, public, file_size_limit)
+VALUES ('avatar', 'avatar', TRUE, 5242880); -- 5MB limit
+
 -- Function to generate a random SKU (e.g., 'SKU-A1B2C3D4')
 CREATE OR REPLACE FUNCTION public.generate_random_sku()
 RETURNS TEXT AS $$

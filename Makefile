@@ -25,6 +25,7 @@ setup-supabase: init-log
 	fi
 	@echo "[$(TIMESTAMP)] Creating .env file with Supabase configurations..." | tee -a $(LOG_FILE)
 	@if [ -s supabase_output.txt ]; then \
+		echo "NEXT_PUBLIC_SUPABASE_TOKEN=127" >> .env; \
 		echo "NEXT_PUBLIC_DESTINATION=/auth/sign-in" >> .env; \
 		echo "NEXT_PUBLIC_APP_URL=http://localhost:3000" >> .env; \
 		echo "NEXT_IMAGE_PUBLIC_URL=http://127.0.0.1:54321/storage/**" >> .env; \

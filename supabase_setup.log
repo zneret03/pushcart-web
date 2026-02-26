@@ -1,26 +1,12 @@
-[2026-02-24 14:35:43] Initializing setup process
-[2026-02-24 14:35:43] Supabase config found, proceeding with setup
-[2026-02-24 14:35:43] Starting Supabase setup...
-[2026-02-24 14:35:43] Docker is running, executing 'yarn supabase start'...
- auth Skipped - Image is already present locally 
- edgeRuntime Skipped - Image is already present locally 
- studio Skipped - Image is already present locally 
- gateway Skipped - Image is already present locally 
- realtime Skipped - Image is already present locally 
- pgmeta Skipped - Image is already present locally 
- vector Skipped - Image is already present locally 
- mailpit Skipped - Image is already present locally 
- api Skipped - Image is already present locally 
- storage Skipped - Image is already present locally 
- imgProxy Skipped - Image is already present locally 
- analytics Skipped - Image is already present locally 
- db Skipped - Image is already present locally 
-Starting database from backup...
-Starting containers...
-Waiting for health checks...
-Started supabase local development setup.
+[2026-02-26 18:28:09] Initializing setup process
+[2026-02-26 18:28:09] Supabase config found, proceeding with setup
+[2026-02-26 18:28:09] Starting Supabase setup...
+[2026-02-26 18:28:09] Docker is running, executing 'yarn supabase start'...
+supabase start is already running.
+Stopped services: [supabase_imgproxy_pushcart-web supabase_pooler_pushcart-web]
+supabase local development setup is running.
 
-[2026-02-24 14:35:43] Supabase started successfully
-[2026-02-24 14:35:43] Creating .env file with Supabase configurations...
-[2026-02-24 14:35:43] .env file created successfully
-[2026-02-24 14:35:43] Temporary output file cleaned up
+[2026-02-26 18:28:09] Supabase started successfully
+[2026-02-26 18:28:09] Creating .env file with Supabase configurations...
+[2026-02-26 18:28:09] .env file created successfully
+[2026-02-26 18:28:09] Temporary output file cleaned up

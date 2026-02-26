@@ -53,9 +53,9 @@ export async function updateSession(request: NextRequest) {
     .eq('id', user?.id)
     .single();
 
-  const baseAdminURL = `/backend/${userData?.id}`;
+  const baseAdminURL = `/admin/${userData?.id}`;
 
-  const protectedAdminRoutes = ['dashboard'];
+  const protectedAdminRoutes = ['dashboard', 'products'];
 
   const userRestrictedRoutes = ['/admin'];
 
