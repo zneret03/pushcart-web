@@ -5,7 +5,7 @@ export type UpdateUser = Database['public']['Tables']['profiles']['Update'];
 
 export type UserForm = Omit<
   Users,
-  'created_at' | 'updated_at' | 'archived_at' | 'avatar'
+  'created_at' | 'updated_at' | 'archived_at' | 'avatar_url'
 > & {
   password?: string;
 };
