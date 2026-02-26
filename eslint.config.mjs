@@ -37,6 +37,11 @@ export default tseslint.config(
       react: reactPlugin,
       "jsx-a11y": jsxA11yPlugin,
     },
+    settings: {
+      react: {
+        version: 'detect'
+      }
+    },
     rules: {
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
@@ -116,7 +121,7 @@ export default tseslint.config(
     files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
       parserOptions: {
-        project: true,
+        projectService: true,
         tsconfigRootDir: __dirname,
       },
     },

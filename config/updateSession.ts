@@ -54,25 +54,12 @@ export async function updateSession(request: NextRequest) {
     .single();
 
   const baseAdminURL = `/backend/${userData?.id}`;
-  const baseUserURL = `/employee/${userData?.id}`;
-  const baseStaffURL = `/staff/${userData?.id}`;
 
   const protectedAdminRoutes = [
     "dashboard",
-    "users",
-    "leave-categories",
-    "leaves",
-    "user_credits",
-    "attendance",
-    "personal_management",
-    "document_request",
-    "requested_documents",
-    "awards",
-    "nominated_awards",
   ];
-  const employeeRestrictedRoutes = ["/backend", "/staff"];
-  const staffRestrictedRoutes = ["/backend", "/employee"];
-  const adminRestrictedRoutes = ["/employee", "/staff"];
+
+  const userRestrictedRoutes = ["/admin" ];
 
   const isProtected = protectedAdminRoutes.some((route) =>
     pathname.endsWith(route),
@@ -83,24 +70,8 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (
-    userData?.role === "employee" &&
-    isRestrictedPath(employeeRestrictedRoutes, pathname)
-  ) {
-    return NextResponse.redirect(
-      new URL(`${baseUserURL}/dashboard`, request.url),
-    );
-  }
-
-  if (
-    userData?.role === "staff" &&
-    isRestrictedPath(staffRestrictedRoutes, pathname)
-  ) {
-    return NextResponse.redirect(new URL(`${baseStaffURL}/user`, request.url));
-  }
-
-  if (
     userData?.role === "admin" &&
-    isRestrictedPath(adminRestrictedRoutes, pathname)
+    isRestrictedPath(userRestrictedRoutes, pathname)
   ) {
     return NextResponse.redirect(
       new URL(`${baseAdminURL}/dashboard`, request.url),

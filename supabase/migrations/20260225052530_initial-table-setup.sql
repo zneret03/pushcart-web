@@ -47,8 +47,8 @@ FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, role)
-  VALUES (new.id, 'user'::public.user_role);
+  INSERT INTO public.profiles (id, role, email)
+  VALUES (new.id, 'user'::public.user_role, new.email);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

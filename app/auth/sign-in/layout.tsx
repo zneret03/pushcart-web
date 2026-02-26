@@ -1,4 +1,4 @@
-import { FolderKey } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 
 export default function AuthLayout({
@@ -12,7 +12,7 @@ export default function AuthLayout({
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-md">
-              <FolderKey className="size-4" />
+              <ShoppingCart className="size-4" />
             </div>
             
           </a>
