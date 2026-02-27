@@ -55,7 +55,7 @@ export async function updateSession(request: NextRequest) {
 
   const baseAdminURL = `/admin/${userData?.id}`;
 
-  const protectedAdminRoutes = ['dashboard', 'products'];
+  const protectedAdminRoutes = ['pos', 'products'];
 
   const userRestrictedRoutes = ['/admin'];
 

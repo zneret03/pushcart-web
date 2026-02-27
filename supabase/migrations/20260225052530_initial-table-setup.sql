@@ -14,8 +14,26 @@ $$ LANGUAGE plpgsql;
 INSERT INTO storage.buckets (id, name, public, file_size_limit)
 VALUES ('products', 'products', TRUE, 5242880); -- 5MB limit
 
+CREATE POLICY "Upload Select products" ON storage.objects
+    FOR SELECT TO public USING (bucket_id = 'products');
+CREATE POLICY "Upload Insert products" ON storage.objects
+    FOR INSERT TO public WITH CHECK (bucket_id = 'products');
+CREATE POLICY "Upload Update products" ON storage.objects
+    FOR UPDATE TO public USING (bucket_id = 'products');
+CREATE POLICY "Upload Delete products" ON storage.objects
+    FOR DELETE TO public USING (bucket_id = 'products');
+
 INSERT INTO storage.buckets (id, name, public, file_size_limit)
 VALUES ('avatar', 'avatar', TRUE, 5242880); -- 5MB limit
+
+CREATE POLICY "Upload Select avatar" ON storage.objects
+    FOR SELECT TO public USING (bucket_id = 'avatar');
+CREATE POLICY "Upload Insert avatar" ON storage.objects
+    FOR INSERT TO public WITH CHECK (bucket_id = 'avatar');
+CREATE POLICY "Upload Update avatar" ON storage.objects
+    FOR UPDATE TO public USING (bucket_id = 'avatar');
+CREATE POLICY "Upload Delete avatar" ON storage.objects
+    FOR DELETE TO public USING (bucket_id = 'avatar');
 
 -- Function to generate a random SKU (e.g., 'SKU-A1B2C3D4')
 CREATE OR REPLACE FUNCTION public.generate_random_sku()
@@ -93,8 +111,10 @@ CREATE TABLE products (
     sku TEXT UNIQUE DEFAULT public.generate_random_sku() NOT NULL,
     price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
     stock_quantity INT NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),
+    image_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE,
+    archived_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Trigger to update timestamp on products
@@ -123,7 +143,8 @@ CREATE TABLE carts (
     qr_code_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL, 
     status cart_status DEFAULT 'active'::cart_status NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE,
+    archived_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Trigger to update timestamp on carts
@@ -178,7 +199,8 @@ CREATE TABLE orders (
     discount_amount NUMERIC(10, 2) DEFAULT 0,
     total_amount NUMERIC(10, 2) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE,
+    archived_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Trigger to update timestamp on orders

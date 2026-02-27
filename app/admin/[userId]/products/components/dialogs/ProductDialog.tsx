@@ -9,21 +9,26 @@ import {
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog';
+import { ImageUpload } from '@/components/custom/ImageUpload';
+import { Controller } from 'react-hook-form';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CustomButton } from '@/components/custom/CustomButton';
 import { useShallow } from 'zustand/react/shallow';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { Products } from '@/lib/types/product';
+import { ProductsInsert } from '@/lib/types/product';
+import { addProduct } from '@/services/products/product.services';
 import { useProductDialog } from '@/services/products/state/product-dialog';
-
-type ProductForm = Partial<Products> & {
-  yearThreshold: number;
-};
 
 export function ProductsDialog(): JSX.Element {
   const [isPending, startTransition] = useTransition();
-  const { handleSubmit } = useForm<ProductForm>();
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+    register,
+  } = useForm<ProductsInsert>();
 
   const router = useRouter();
 
@@ -40,9 +45,9 @@ export function ProductsDialog(): JSX.Element {
     router.refresh();
   };
 
-  const onSubmit = async (data: ProductForm): Promise<void> => {
+  const onSubmit = async (data: ProductsInsert): Promise<void> => {
     startTransition(async () => {
-      // await addAward({ ...data, year: today.getFullYear() });
+      await addProduct(data);
       resetVariables();
     });
   };
@@ -55,7 +60,61 @@ export function ProductsDialog(): JSX.Element {
         <DialogHeader>
           <DialogTitle>Product Dialog</DialogTitle>
         </DialogHeader>
-        sample field
+
+        <div className="grid w-full grid-cols-2 gap-4">
+          <Input
+            title="Name"
+            placeholder="product name"
+            {...register('name', {
+              required: 'this is required',
+            })}
+            hasError={!!errors.name}
+            errorMessage={errors?.name?.message}
+          />
+          <Input
+            type="number"
+            title="price"
+            placeholder="product price"
+            {...register('price', {
+              required: 'this is required',
+            })}
+            hasError={!!errors?.price}
+            errorMessage={errors?.price?.message}
+          />
+        </div>
+
+        <Input
+          type="number"
+          title="Quantity"
+          placeholder="product quantity"
+          {...register('stock_quantity', {
+            required: 'this is required',
+          })}
+          hasError={!!errors?.stock_quantity}
+          errorMessage={errors?.stock_quantity?.message}
+        />
+
+        <div className="space-y-2">
+          <Controller
+            name="image_url"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <ImageUpload
+                title="Image"
+                pendingFiles={value as File[]}
+                isLoading={isPending}
+                acceptedImageCount={1}
+                setPendingFiles={(value) => onChange(value)}
+              />
+            )}
+          />
+          {!!errors.image_url && (
+            <h1 className="text-sm text-red-500">
+              {errors?.image_url?.message}
+            </h1>
+          )}
+        </div>
+
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">

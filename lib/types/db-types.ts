@@ -170,6 +170,7 @@ export type Database = {
           price: number;
           sku: string;
           stock_quantity: number;
+          image_url: string;
           updated_at: string | null;
         };
         Insert: {
@@ -179,6 +180,7 @@ export type Database = {
           price: number;
           sku?: string;
           stock_quantity?: number;
+          image_url: string | File[];
           updated_at?: string | null;
         };
         Update: {
@@ -188,6 +190,7 @@ export type Database = {
           price?: number;
           sku?: string;
           stock_quantity?: number;
+          image_url: string;
           updated_at?: string | null;
         };
         Relationships: [];
