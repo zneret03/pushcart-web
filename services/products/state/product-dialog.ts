@@ -3,7 +3,7 @@ import { createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
 import { Products } from '@/lib/types/product';
 
-type ProductDialogType = 'add' | 'update' | 'delete' | null;
+type ProductDialogType = 'add' | 'edit' | 'delete' | null;
 
 export type AttendanceData = Products;
 

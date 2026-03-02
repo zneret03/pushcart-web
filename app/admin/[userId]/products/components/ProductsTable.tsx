@@ -179,7 +179,13 @@ export function ProductsTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  toggleOpen?.(true, 'edit', {
+                    ...row.original,
+                  })
+                }
+              >
                 <Pencil />
                 Edit info
               </DropdownMenuItem>

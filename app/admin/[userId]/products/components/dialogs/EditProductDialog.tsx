@@ -21,7 +21,7 @@ import { ProductsInsert } from '@/lib/types/product';
 import { addProduct } from '@/services/products/product.services';
 import { useProductDialog } from '@/services/products/state/product-dialog';
 
-export function ProductsDialog(): JSX.Element {
+export function EditProductsDialog(): JSX.Element {
   const [isPending, startTransition] = useTransition();
   const {
     handleSubmit,
@@ -52,7 +52,7 @@ export function ProductsDialog(): JSX.Element {
     });
   };
 
-  const isOpenDialog = open && type === 'add';
+  const isOpenDialog = open && type === 'edit';
 
   return (
     <Dialog
@@ -61,7 +61,7 @@ export function ProductsDialog(): JSX.Element {
     >
       <DialogContent className="sm:max-w-[40rem]">
         <DialogHeader>
-          <DialogTitle>Product Dialog</DialogTitle>
+          <DialogTitle>Edit Product Dialog</DialogTitle>
         </DialogHeader>
 
         <div className="grid w-full grid-cols-2 gap-4">
