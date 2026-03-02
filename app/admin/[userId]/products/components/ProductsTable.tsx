@@ -14,7 +14,6 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 import { ChevronDown, Plus, MoreHorizontal, Pencil, Trash } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -22,6 +21,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -31,8 +31,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { TooltipComponent } from '@/components/custom/Tooltip';
-import { Badge } from '@/components/ui/badge';
 import { format, subHours } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useShallow } from 'zustand/shallow';
@@ -41,7 +39,6 @@ import { Pagination } from '@/components/custom/Pagination';
 import { Pagination as PaginationType } from '@/lib/types/pagination';
 import { useRouter, usePathname } from 'next/navigation';
 import { debounce } from 'lodash';
-import { avatarName } from '@/helpers/avatarName';
 import { Products } from '@/lib/types/product';
 
 interface AwardsData extends PaginationType {
@@ -74,7 +71,7 @@ export function ProductsTable({
   const onDebounce = React.useMemo(
     () =>
       debounce((value) => {
-        if (!!value) {
+        if (!value) {
           router.replace(`${pathname}?page=${currentPage}&search=${value}`);
           return;
         }
@@ -93,56 +90,50 @@ export function ProductsTable({
     router.replace(`${pathname}/products`);
   };
 
-  const columns: ColumnDef<any>[] = React.useMemo(
+  const columns: ColumnDef<Products>[] = React.useMemo(
     () => [
       {
-        accessorKey: 'users.email',
+        accessorKey: 'name',
         header: 'Name',
         cell: function ({ row }) {
           return (
             <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage
-                  className="object-cover"
-                  src={row.original?.users.avatar ?? ''}
-                  alt={row.original?.users?.email}
-                />
-                <AvatarFallback className="rounded-lg bg-blue-400 fill-blue-500 font-semibold text-white capitalize">
-                  {avatarName(row.original?.users?.email)}
-                </AvatarFallback>
-              </Avatar>
-              <div>{row.original.users?.email}</div>
+              <div>{row.original.name}</div>
             </div>
           );
         },
       },
       {
-        accessorKey: 'title',
+        accessorKey: 'sku',
         header: 'SKU',
         cell: function ({ row }) {
           return (
-            <div className="font-medium capitalize">{row.original.title}</div>
+            <div className="font-medium capitalize">{row.original.sku}</div>
           );
         },
       },
       {
-        accessorKey: 'description',
+        accessorKey: 'price',
         header: 'Price',
         cell: function ({ row }) {
           return (
-            <TooltipComponent value={row.original.description as string}>
-              <div className="line-clamp-1 w-30 text-ellipsis capitalize">
-                {row.original.description}
+            <Badge variant="secondary" className="w-auto">
+              <div className="text-ellipsis capitalize">
+                {row.original.price}
               </div>
-            </TooltipComponent>
+            </Badge>
           );
         },
       },
       {
-        accessorKey: 'awards_type',
+        accessorKey: 'stock_quantity',
         header: 'Quantity',
         cell: function ({ row }) {
-          return <Badge variant="outline">dawd</Badge>;
+          return (
+            <Badge variant="secondary">
+              <div>{row.original.stock_quantity}</div>{' '}
+            </Badge>
+          );
         },
       },
       {

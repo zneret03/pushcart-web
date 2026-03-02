@@ -15,15 +15,18 @@ export default async function ProductsPage({
     `?page=${page || 1}&perPage=10&search=${search}&sortBy=created_at`,
   );
 
-  console.info(response);
-
   return (
     <Container
       title="Products"
       description="All added products can be seen here"
     >
       <ProductsTable
-        {...{ products: [], totalPages: 0, currentPage: 0, count: 0 }}
+        {...{
+          products: response?.products,
+          totalPages: response?.totalPages,
+          currentPage: response?.currentPage,
+          count: response?.count,
+        }}
       />
       <ProductsDialog />
     </Container>
