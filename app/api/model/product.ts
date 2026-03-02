@@ -43,7 +43,7 @@ export const addProduct = async (data: FormData) => {
   }
 };
 
-export const editLeaveCategories = async (
+export const editProducts = async (
   data: { [key: string]: string | Date },
   id: string,
 ) => {

@@ -183,7 +183,13 @@ export function ProductsTable({
                 <Pencil />
                 Edit info
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  toggleOpen?.(true, 'delete', {
+                    ...row.original,
+                  })
+                }
+              >
                 <Trash />
                 Delete
               </DropdownMenuItem>

@@ -3,6 +3,7 @@ import { ProductsTable } from './components/ProductsTable';
 import { Container } from '@/components/custom/Container';
 import { ProductsDialog } from './components/dialogs/ProductDialog';
 import { getProducts } from '@/services/products/product.services';
+import { DeleteProductDialog } from './components/dialogs/DeleteProducts';
 
 export default async function ProductsPage({
   searchParams,
@@ -28,7 +29,9 @@ export default async function ProductsPage({
           count: response?.count,
         }}
       />
+
       <ProductsDialog />
+      <DeleteProductDialog />
     </Container>
   );
 }

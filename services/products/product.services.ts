@@ -48,3 +48,20 @@ export const addProduct = async (data: ProductsInsert) => {
     }
   }
 };
+
+export const deleteProducts = async (id: string): Promise<void> => {
+  try {
+    await axiosService.delete(`/api/protected/products/${id}`);
+
+    toast('Successfully', {
+      description: 'Successfully Delete product.',
+    });
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
