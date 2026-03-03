@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   env: {
@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/",
+        source: '/',
         destination: `${process.env.NEXT_PUBLIC_DESTINATION}`,
         permanent: true,
       },

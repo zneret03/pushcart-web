@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useTransition } from 'react';
+import { JSX, useEffect, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -28,15 +28,17 @@ export function EditProductsDialog(): JSX.Element {
     formState: { errors },
     control,
     register,
+    reset,
   } = useForm<ProductsInsert>();
 
   const router = useRouter();
 
-  const { open, toggleOpen, type } = useProductDialog(
+  const { open, toggleOpen, type, data } = useProductDialog(
     useShallow((state) => ({
       open: state.open,
       type: state.type,
       toggleOpen: state.toggleOpenDialog,
+      data: state.data,
     })),
   );
 
@@ -51,6 +53,17 @@ export function EditProductsDialog(): JSX.Element {
       resetVariables();
     });
   };
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        name: data?.name,
+        price: data?.price,
+        stock_quantity: data?.stock_quantity,
+        image_url: data?.image_url,
+      });
+    }
+  }, [data]);
 
   const isOpenDialog = open && type === 'edit';
 
@@ -104,6 +117,9 @@ export function EditProductsDialog(): JSX.Element {
             render={({ field: { onChange, value } }) => (
               <ImageUpload
                 title="Image"
+                filePreview={
+                  (typeof value === 'string' && (value as string)) || null
+                }
                 pendingFiles={value as File[]}
                 isLoading={isPending}
                 acceptedImageCount={1}
@@ -111,6 +127,7 @@ export function EditProductsDialog(): JSX.Element {
               />
             )}
           />
+
           {!!errors.image_url && (
             <h1 className="text-sm text-red-500">
               {errors?.image_url?.message}
@@ -131,7 +148,7 @@ export function EditProductsDialog(): JSX.Element {
               isLoading={isPending}
               onClick={handleSubmit(onSubmit)}
             >
-              Create
+              Update
             </CustomButton>
           </DialogClose>
         </DialogFooter>

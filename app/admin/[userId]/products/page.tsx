@@ -1,9 +1,11 @@
 import { JSX } from 'react';
 import { ProductsTable } from './components/ProductsTable';
 import { Container } from '@/components/custom/Container';
-import { ProductsDialog } from './components/dialogs/ProductDialog';
 import { getProducts } from '@/services/products/product.services';
+
 import { DeleteProductDialog } from './components/dialogs/DeleteProducts';
+import { ProductsDialog } from './components/dialogs/ProductDialog';
+import { EditProductsDialog } from './components/dialogs/EditProductDialog';
 
 export default async function ProductsPage({
   searchParams,
@@ -32,6 +34,7 @@ export default async function ProductsPage({
 
       <ProductsDialog />
       <DeleteProductDialog />
+      <EditProductsDialog />
     </Container>
   );
 }

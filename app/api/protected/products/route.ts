@@ -5,10 +5,8 @@ import {
   badRequestResponse,
   generalErrorResponse,
   successResponse,
-  validationErrorNextResponse,
 } from '../../helpers/response';
 import { Products } from '@/lib/types/product';
-import { isEmpty } from 'lodash';
 import { addProduct } from '../../model/product';
 
 export async function GET(req: NextRequest) {

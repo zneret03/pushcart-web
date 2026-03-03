@@ -7,7 +7,7 @@ interface ImageUploadProps {
   pendingFiles: File[];
   setPendingFiles: (files: File[]) => void;
   title: string;
-  filePreview?: string;
+  filePreview?: string | null;
   isLoading?: boolean;
   isHidePreview?: boolean;
   acceptedImageCount?: number;
@@ -41,6 +41,7 @@ export const ImageUpload = ({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     const maxSize = 2 * 1024 * 1024;
+
     if (!files || files.length === 0) return;
 
     if (files[0].size > maxSize) {
