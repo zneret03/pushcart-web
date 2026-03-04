@@ -29,6 +29,6 @@ export async function PUT(
   }
 
   if (body.type === 'edit-products') {
-    return editProducts(body, id);
+    return editProducts(body.data, id);
   }
 }

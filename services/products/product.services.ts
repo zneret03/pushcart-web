@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { axiosService } from '@/app/api/axios-client';
-import { ProductsInsert } from '@/lib/types/product';
+import { ProductsInsert, ProductsUpdate } from '@/lib/types/product';
 import { toast } from 'sonner';
 import { AxiosResponse } from 'axios';
 
@@ -55,6 +55,29 @@ export const deleteProducts = async (id: string): Promise<void> => {
 
     toast('Successfully', {
       description: 'Successfully Delete product.',
+    });
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
+
+export const editProducts = async (
+  data: ProductsUpdate,
+  id: string,
+): Promise<void> => {
+  try {
+    await axiosService.put(`/api/protected/products/${id}`, {
+      data,
+      type: 'edit-products',
+    });
+
+    toast('Successfully', {
+      description: 'Successfully edit product.',
     });
   } catch (e) {
     if (axios.isAxiosError(e)) {

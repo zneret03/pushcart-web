@@ -1,6 +1,7 @@
 import { generalErrorResponse, successResponse } from '../helpers/response';
 import { uploadFileImage } from '../helpers/uploadImage';
 import { createClient } from '@/config';
+import { removeImageViaPath, getImagePath } from './image';
 
 export const addProduct = async (data: FormData) => {
   try {
@@ -50,7 +51,22 @@ export const editProducts = async (
   try {
     const supabase = await createClient();
 
-    const { error } = await supabase.from('products').update(data).eq('id', id);
+    if (Array.isArray(data.image_url)) {
+      removeImageViaPath(supabase, getImagePath(data.old_image as string));
+    }
+
+    const newData = {
+      name: data?.name,
+      sku: data?.sku,
+      price: data?.price,
+      stock_quantity: data?.stock_quantity,
+      image_url: data?.image_url,
+    };
+
+    const { error } = await supabase
+      .from('products')
+      .update(newData)
+      .eq('id', id);
 
     if (error) {
       return generalErrorResponse({ error: error.message });

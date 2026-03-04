@@ -17,8 +17,8 @@ import { CustomButton } from '@/components/custom/CustomButton';
 import { useShallow } from 'zustand/react/shallow';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { ProductsInsert } from '@/lib/types/product';
-import { addProduct } from '@/services/products/product.services';
+import { ProductsUpdate } from '@/lib/types/product';
+import { editProducts } from '@/services/products/product.services';
 import { useProductDialog } from '@/services/products/state/product-dialog';
 
 export function EditProductsDialog(): JSX.Element {
@@ -29,7 +29,7 @@ export function EditProductsDialog(): JSX.Element {
     control,
     register,
     reset,
-  } = useForm<ProductsInsert>();
+  } = useForm<ProductsUpdate>();
 
   const router = useRouter();
 
@@ -47,9 +47,14 @@ export function EditProductsDialog(): JSX.Element {
     router.refresh();
   };
 
-  const onSubmit = async (data: ProductsInsert): Promise<void> => {
+  const onSubmit = async (productData: ProductsUpdate): Promise<void> => {
     startTransition(async () => {
-      await addProduct(data);
+      const newData = {
+        old_image: data?.image_url,
+        ...productData,
+      };
+
+      editProducts(newData as ProductsUpdate, data?.id as string);
       resetVariables();
     });
   };
