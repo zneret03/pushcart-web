@@ -26,7 +26,7 @@ interface AuthProviderType {
   children: ReactNode;
 }
 
-export const AuthContext = createContext<UserType | null>(null);
+export const AUTHCONTEXT = createContext<UserType | null>(null);
 
 export function AuthProvider({ children }: AuthProviderType) {
   const [user, setUser] = useState<Users | null>(null);
@@ -92,14 +92,14 @@ export function AuthProvider({ children }: AuthProviderType) {
   }
 
   return (
-    <AuthContext.Provider value={{ user: user as Users }}>
+    <AUTHCONTEXT.Provider value={{ user: user as Users }}>
       {children}
-    </AuthContext.Provider>
+    </AUTHCONTEXT.Provider>
   );
 }
 
 export const useUser = () => {
-  const context = useContext(AuthContext);
+  const context = useContext(AUTHCONTEXT);
 
   if (context === undefined) {
     throw new Error('useUser must be used within a AuthProvider');
