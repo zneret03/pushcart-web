@@ -60,7 +60,8 @@ CREATE TABLE profiles (
     address TEXT,
     role TEXT NOT NULL CHECK (role IN ('admin', 'user')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE,
+    archived_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Trigger to update timestamp on profiles
