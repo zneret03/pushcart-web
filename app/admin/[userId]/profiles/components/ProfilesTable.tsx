@@ -33,16 +33,16 @@ import {
 } from '@/components/ui/table';
 import { format, subHours } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { useShallow } from 'zustand/shallow';
-import { useProductDialog } from '@/services/products/state/product-dialog';
 import { Pagination } from '@/components/custom/Pagination';
 import { Pagination as PaginationType } from '@/lib/types/pagination';
 import { useRouter, usePathname } from 'next/navigation';
 import { debounce } from 'lodash';
-import { Products } from '@/lib/types/product';
+import { useUserDialog } from '@/services/users/state/user-dialog';
+import { useShallow } from 'zustand/shallow';
+import { Users } from '@/lib/types/users';
 
 interface AwardsData extends PaginationType {
-  profiles: Products[];
+  profiles: Users[];
 }
 
 export function ProfilesTable({
@@ -59,7 +59,7 @@ export function ProfilesTable({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const { toggleOpen } = useProductDialog(
+  const { toggleOpen } = useUserDialog(
     useShallow((state) => ({ toggleOpen: state.toggleOpenDialog })),
   );
 
@@ -90,59 +90,49 @@ export function ProfilesTable({
     router.replace(`${pathname}/products`);
   };
 
-  const columns: ColumnDef<Products>[] = React.useMemo(
+  const columns: ColumnDef<Users>[] = React.useMemo(
     () => [
       {
-        accessorKey: 'name',
+        accessorKey: 'email',
         header: 'Email',
         cell: function ({ row }) {
           return (
             <div className="flex items-center gap-2">
-              <div>{row.original.name}</div>
+              <div>{row.original.email}</div>
             </div>
           );
         },
       },
       {
-        accessorKey: 'sku',
+        accessorKey: 'first_name',
         header: 'Name',
         cell: function ({ row }) {
-          return (
-            <div className="font-medium capitalize">{row.original.sku}</div>
-          );
+          const name = row.original?.first_name
+            ? `${row.original?.first_name} ${row.original?.last_name}`
+            : 'N/A';
+
+          return <div className="font-medium capitalize">{name}</div>;
         },
       },
       {
-        accessorKey: 'price',
-        header: 'Price',
+        accessorKey: 'address',
+        header: 'Address',
         cell: function ({ row }) {
+          const userAddress = row.original.address ?? 'N/A';
           return (
             <Badge variant="secondary" className="w-auto">
-              <div className="text-ellipsis capitalize">
-                {row.original.price}
-              </div>
+              <div className="text-ellipsis capitalize">{userAddress}</div>
             </Badge>
           );
         },
       },
       {
-        accessorKey: 'stock_quantity',
-        header: 'address',
-        cell: function ({ row }) {
-          return (
-            <Badge variant="secondary">
-              <div>{row.original.stock_quantity}</div>{' '}
-            </Badge>
-          );
-        },
-      },
-      {
-        accessorKey: 'stock_quantity',
+        accessorKey: 'role',
         header: 'role',
         cell: function ({ row }) {
           return (
             <Badge variant="secondary">
-              <div>{row.original.stock_quantity}</div>{' '}
+              <div>{row.original.role}</div>{' '}
             </Badge>
           );
         },
@@ -190,23 +180,11 @@ export function ProfilesTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() =>
-                  toggleOpen?.(true, 'edit', {
-                    ...row.original,
-                  })
-                }
-              >
+              <DropdownMenuItem>
                 <Pencil />
                 Edit info
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  toggleOpen?.(true, 'delete', {
-                    ...row.original,
-                  })
-                }
-              >
+              <DropdownMenuItem>
                 <Trash />
                 Delete
               </DropdownMenuItem>
@@ -287,9 +265,9 @@ export function ProfilesTable({
           )}
 
           {!isDashboard && (
-            <Button onClick={() => toggleOpen?.(true, 'add')}>
+            <Button onClick={() => toggleOpen?.(true, 'add', null)}>
               <Plus className="h-5 w-5" />
-              Add Products
+              Add User
             </Button>
           )}
         </div>

@@ -276,7 +276,7 @@ export function ProductsTable({
           )}
 
           {!isDashboard && (
-            <Button onClick={() => toggleOpen?.(true, 'add')}>
+            <Button onClick={() => toggleOpen?.(true, 'add', null)}>
               <Plus className="h-5 w-5" />
               Add Products
             </Button>
