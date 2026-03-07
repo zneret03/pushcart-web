@@ -6,6 +6,7 @@ import {
   generalErrorResponse,
   successResponse,
 } from '../../helpers/response';
+import { signUp } from '../../model/profiles';
 import { Users } from '@/lib/types/users';
 
 export async function GET(req: NextRequest) {
@@ -46,6 +47,19 @@ export async function GET(req: NextRequest) {
         currentPage,
       },
     });
+  } catch (error) {
+    const newError = error as Error;
+    return generalErrorResponse({ error: newError.message });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.formData();
+
+    if (body.get('type') === 'sign-up') {
+      return signUp(body);
+    }
   } catch (error) {
     const newError = error as Error;
     return generalErrorResponse({ error: newError.message });

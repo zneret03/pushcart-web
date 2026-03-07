@@ -103,6 +103,9 @@ ON profiles FOR SELECT TO authenticated USING (id = auth.uid());
 CREATE POLICY "Admins can view all profiles" 
 ON profiles FOR SELECT TO authenticated USING (is_admin());
 
+CREATE POLICY "Admin can insert users" 
+ON profiles FOR INSERT TO authenticated WITH CHECK (is_admin());
+
 CREATE POLICY "Users can update own profile, Admins can update all" 
 ON profiles FOR UPDATE TO authenticated USING (id = auth.uid() OR is_admin());
 

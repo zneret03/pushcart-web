@@ -38,7 +38,7 @@ export function LoginForm({
 
         setUserInfo(data as UserForm);
 
-        router.push(`/admin/${data?.id}/pos`);
+        router.push(`/admin/${data?.id}/dashboard`);
       } catch (error) {
         setMessage(error as string);
       }

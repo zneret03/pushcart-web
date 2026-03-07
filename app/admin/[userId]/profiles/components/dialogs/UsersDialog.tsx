@@ -9,6 +9,14 @@ import {
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { CustomButton } from '@/components/custom/CustomButton';
 import { useShallow } from 'zustand/react/shallow';
@@ -16,6 +24,12 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { UsersInsert } from '@/lib/types/users';
 import { useUserDialog } from '@/services/users/state/user-dialog';
+import { Input } from '@/components/ui/input';
+import { regularEmailRegex } from '@/helpers/reusableRegex';
+import { ImageUpload } from '@/components/custom/ImageUpload';
+import { Controller } from 'react-hook-form';
+import { signUp } from '@/services/users/users.services';
+import { roleTypes } from '../../helpers/constants';
 
 export function UsersDialog(): JSX.Element {
   const [isPending, startTransition] = useTransition();
@@ -24,6 +38,7 @@ export function UsersDialog(): JSX.Element {
     formState: { errors },
     control,
     register,
+    setError,
   } = useForm<UsersInsert>();
 
   const router = useRouter();
@@ -43,7 +58,14 @@ export function UsersDialog(): JSX.Element {
 
   const onSubmit = async (data: UsersInsert): Promise<void> => {
     startTransition(async () => {
-      // await addProduct(data);
+      if (!data.avatar_url) {
+        setError('avatar_url', {
+          message: 'required field',
+        });
+        return;
+      }
+
+      await signUp({ ...data, role: data.role.toLocaleLowerCase() });
       resetVariables();
     });
   };
@@ -59,7 +81,111 @@ export function UsersDialog(): JSX.Element {
         <DialogHeader>
           <DialogTitle>User Dialog</DialogTitle>
         </DialogHeader>
-        User add
+
+        <Input
+          title="Email"
+          placeholder="Email"
+          hasError={!!errors.email}
+          errorMessage={errors.email?.message}
+          {...register('email', {
+            required: 'required field',
+            pattern: {
+              value: regularEmailRegex,
+              message: 'invalid email address',
+            },
+          })}
+        />
+
+        <div className="grid grid-cols-3 gap-2">
+          <Input
+            title="First Name"
+            hasError={!!errors.first_name}
+            errorMessage={errors.first_name?.message}
+            placeholder="First Name"
+            {...register('first_name', {
+              required: 'required field',
+            })}
+          />
+          <Input
+            title="Last Name"
+            placeholder="Last Name"
+            hasError={!!errors.last_name}
+            errorMessage={errors.last_name?.message}
+            {...register('last_name', {
+              required: 'required field',
+            })}
+          />
+          <Input
+            title="Middle Name"
+            placeholder="Middle Name"
+            hasError={!!errors.middle_name}
+            errorMessage={errors.middle_name?.message}
+            {...register('middle_name', {
+              required: 'required field',
+            })}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Input
+            title="Address"
+            placeholder="Address"
+            hasError={!!errors.address}
+            errorMessage={errors.address?.message}
+            {...register('address', {
+              required: 'required field',
+            })}
+          />
+          <div className="space-y-2">
+            <Label className="mb-1.5 text-sm font-medium">Role*</Label>
+            <Controller
+              name="role"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  value={value as string}
+                  onValueChange={(e) => onChange(e)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roleTypes.map((item, index) => (
+                      <SelectItem key={`${item}-${index}`} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {!!errors.role && (
+              <h1 className="text-sm text-red-500">{errors.role.message}</h1>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Controller
+            name="avatar_url"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <ImageUpload
+                title="Image"
+                pendingFiles={value as File[]}
+                isLoading={isPending}
+                acceptedImageCount={1}
+                setPendingFiles={(value) => onChange(value)}
+              />
+            )}
+          />
+          {!!errors.avatar_url && (
+            <h1 className="text-sm text-red-500">
+              {errors?.avatar_url?.message}
+            </h1>
+          )}
+        </div>
+
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">
