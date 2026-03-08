@@ -55,3 +55,28 @@ export const signUp = async ({
     }
   }
 };
+
+export const revokeOrReinstate = async (
+  archivedAt: Date | null,
+  banUntil: string,
+  id: string,
+): Promise<void> => {
+  try {
+    const response = await axiosService.put(`/api/protected/profiles/${id}`, {
+      archivedAt,
+      banUntil,
+      type: 'banned-until',
+    });
+
+    toast('Successfully', {
+      description: response.data.message,
+    });
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};

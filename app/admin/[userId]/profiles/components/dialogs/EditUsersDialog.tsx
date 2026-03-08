@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useTransition } from 'react';
+import { JSX, useTransition, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -31,7 +31,7 @@ import { Controller } from 'react-hook-form';
 import { signUp } from '@/services/users/users.services';
 import { roleTypes } from '../../helpers/constants';
 
-export function UsersDialog(): JSX.Element {
+export function EditUserDialog(): JSX.Element {
   const [isPending, startTransition] = useTransition();
   const {
     handleSubmit,
@@ -39,15 +39,17 @@ export function UsersDialog(): JSX.Element {
     control,
     register,
     setError,
+    reset,
   } = useForm<UsersInsert>();
 
   const router = useRouter();
 
-  const { open, toggleOpen, type } = useUserDialog(
+  const { open, toggleOpen, type, data } = useUserDialog(
     useShallow((state) => ({
       open: state.open,
       type: state.type,
       toggleOpen: state.toggleOpenDialog,
+      data: state.data,
     })),
   );
 
@@ -70,7 +72,21 @@ export function UsersDialog(): JSX.Element {
     });
   };
 
-  const isOpenDialog = open && type === 'add';
+  useEffect(() => {
+    if (!!data) {
+      reset({
+        email: data.email as string,
+        first_name: data.first_name as string,
+        role: data.role,
+        last_name: data.last_name as string,
+        middle_name: data.middle_name as string,
+        address: data.address as string,
+        avatar_url: data.avatar_url as string,
+      });
+    }
+  }, [data, reset]);
+
+  const isOpenDialog = open && type === 'edit';
 
   return (
     <Dialog
@@ -79,7 +95,7 @@ export function UsersDialog(): JSX.Element {
     >
       <DialogContent className="sm:max-w-[40rem]">
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
+          <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>
 
         <Input

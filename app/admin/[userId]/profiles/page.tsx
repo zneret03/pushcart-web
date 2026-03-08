@@ -1,8 +1,10 @@
 import { JSX } from 'react';
-import { UsersDialog } from './components/dialogs/UsersDialog';
 import { Container } from '@/components/custom/Container';
 import { ProfilesTable } from './components/ProfilesTable';
 import { getProfiles } from '@/services/users/users.services';
+import { BanUserDialog } from './components/dialogs/BanUser';
+import { UsersDialog } from './components/dialogs/UsersDialog';
+import { EditUserDialog } from './components/dialogs/EditUsersDialog';
 
 export default async function Profiles({
   searchParams,
@@ -27,6 +29,8 @@ export default async function Profiles({
       />
 
       <UsersDialog />
+      <BanUserDialog />
+      <EditUserDialog />
     </Container>
   );
 }

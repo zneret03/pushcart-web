@@ -2,11 +2,23 @@ import {
   generalErrorResponse,
   successResponse,
   conflictRequestResponse,
+  badRequestResponse,
 } from '../helpers/response';
 import { getImagePath } from './image';
 import { uploadFileImage } from '../helpers/uploadImage';
 import { createClient } from '@/config';
 import { removeImageViaPath } from './image';
+import { UpdateUser } from '@/lib/types/users';
+
+interface RevokeUser {
+  banUntil: string;
+  archivedAt: Date | null;
+}
+
+interface UpdateUserInfo extends UpdateUser {
+  oldAvatar: string;
+  avatar: string;
+}
 
 export const signUp = async (data: FormData) => {
   try {
@@ -71,6 +83,98 @@ export const signUp = async (data: FormData) => {
     return successResponse({
       message: 'Successfully added product',
       id: userEmailDetails.user.id,
+    });
+  } catch (error) {
+    const newError = error as Error;
+    return generalErrorResponse({ error: newError.message });
+  }
+};
+
+export const revokeUser = async (
+  { banUntil, archivedAt }: RevokeUser,
+  id: string,
+) => {
+  try {
+    const supabase = await createClient();
+
+    const { error } = await supabase.auth.admin.updateUserById(id, {
+      ban_duration: banUntil,
+    });
+
+    if (error) {
+      return generalErrorResponse({ error: error.message });
+    }
+
+    const { error: userError } = await supabase
+      .from('profiles')
+      .update({
+        archived_at: archivedAt,
+      })
+      .eq('id', id);
+
+    if (userError) {
+      return generalErrorResponse({ error: userError.message });
+    }
+
+    return successResponse({
+      message: 'Successfuly revoked user',
+    });
+  } catch (error) {
+    const newError = error as Error;
+    return generalErrorResponse({ error: newError.message });
+  }
+};
+
+export const updateUserInfo = async (body: UpdateUserInfo, id: string) => {
+  try {
+    const supabase = await createClient();
+    const isEqualAvatar = body.oldAvatar !== body.avatar && !!body.oldAvatar;
+    let imageUrl;
+
+    //remove old avatar
+    if (isEqualAvatar) {
+      const image = await uploadFileImage(
+        [body.avatar_url] as File[],
+        body.email as string,
+        'avatar',
+      );
+
+      imageUrl = image;
+      removeImageViaPath(supabase, getImagePath(body.oldAvatar as string));
+    }
+
+    const newData = {
+      first_name: body.first_name,
+      last_name: body.last_name,
+      middle_name: body.last_name,
+      address: body.address,
+      role: body.role,
+      avatar_url: imageUrl,
+    };
+
+    const { error: userError } = await supabase
+      .from('profiles')
+      .update(newData)
+      .eq('id', id);
+
+    if (
+      userError?.message ===
+      'duplicate key value violates unique constraint "users_username_key"'
+    ) {
+      return conflictRequestResponse({
+        error: 'username already exist, please try again.',
+      });
+    }
+
+    if (userError) {
+      if (typeof body.oldAvatar === 'string') {
+        removeImageViaPath(supabase, getImagePath(body.oldAvatar as string));
+      }
+      return badRequestResponse({ error: userError.message || '' });
+    }
+
+    return successResponse({
+      message: 'Successfully updated user details.',
     });
   } catch (error) {
     const newError = error as Error;

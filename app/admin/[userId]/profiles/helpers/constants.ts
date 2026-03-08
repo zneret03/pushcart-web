@@ -1,1 +1,1 @@
-export const roleTypes = ['Admin', 'User'];
+export const roleTypes = ['admin', 'user'];

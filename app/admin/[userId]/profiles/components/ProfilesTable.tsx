@@ -180,13 +180,23 @@ export function ProfilesTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => toggleOpen?.(true, 'edit', { ...row.original })}
+              >
                 <Pencil />
                 Edit info
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  toggleOpen?.(
+                    true,
+                    row.original?.archived_at ? 'reinstate' : 'revoked',
+                    { ...row.original },
+                  )
+                }
+              >
                 <Trash />
-                Delete
+                {row.original.archived_at ? 'Reinstate' : 'Revoke'}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

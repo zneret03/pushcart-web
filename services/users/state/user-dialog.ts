@@ -3,7 +3,7 @@ import { createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
 import { UsersInsert } from '@/lib/types/users';
 
-type UsersDialogType = 'add' | 'edit' | 'delete' | null;
+type UsersDialogType = 'add' | 'edit' | 'revoked' | 'reinstate' | null;
 
 export type UsersData = UsersInsert;
 
