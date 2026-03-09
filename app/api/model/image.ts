@@ -96,6 +96,6 @@ export const removeImage = async (
 };
 
 export const getImagePath = (path: string): string => {
-  const formatPath = path.split('/');
+  const formatPath = path?.split('/');
   return decodeURIComponent(`${formatPath[8]}/${formatPath[9]}`);
 };

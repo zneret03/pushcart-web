@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { axiosService } from '@/app/api/axios-client';
-import { UsersInsert } from '@/lib/types/users';
+import { UserInsertType } from '@/lib/types/users';
 import { toast } from 'sonner';
 
 export const getProfiles = async (params: string) => {
@@ -22,7 +22,8 @@ export const signUp = async ({
   middle_name,
   role,
   email,
-}: UsersInsert) => {
+  password,
+}: UserInsertType) => {
   try {
     const formData = new FormData();
     const newAvatar = avatar_url as File[];
@@ -33,6 +34,7 @@ export const signUp = async ({
     formData.append('email', email as string);
     formData.append('role', role as string);
     formData.append('type', 'sign-up');
+    formData.append('password', password);
 
     const response = await axiosService.post(
       '/api/protected/profiles',

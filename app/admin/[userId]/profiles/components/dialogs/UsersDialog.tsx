@@ -22,7 +22,6 @@ import { CustomButton } from '@/components/custom/CustomButton';
 import { useShallow } from 'zustand/react/shallow';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { UsersInsert } from '@/lib/types/users';
 import { useUserDialog } from '@/services/users/state/user-dialog';
 import { Input } from '@/components/ui/input';
 import { regularEmailRegex } from '@/helpers/reusableRegex';
@@ -30,6 +29,7 @@ import { ImageUpload } from '@/components/custom/ImageUpload';
 import { Controller } from 'react-hook-form';
 import { signUp } from '@/services/users/users.services';
 import { roleTypes } from '../../helpers/constants';
+import { UserInsertType } from '@/lib/types/users';
 
 export function UsersDialog(): JSX.Element {
   const [isPending, startTransition] = useTransition();
@@ -39,7 +39,7 @@ export function UsersDialog(): JSX.Element {
     control,
     register,
     setError,
-  } = useForm<UsersInsert>();
+  } = useForm<UserInsertType>();
 
   const router = useRouter();
 
@@ -56,11 +56,23 @@ export function UsersDialog(): JSX.Element {
     router.refresh();
   };
 
-  const onSubmit = async (data: UsersInsert): Promise<void> => {
+  const onSubmit = async (data: UserInsertType): Promise<void> => {
+    const { password, confirmPassword } = data;
     startTransition(async () => {
       if (!data.avatar_url) {
         setError('avatar_url', {
           message: 'required field',
+        });
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError('password', {
+          message: 'Password doesnt match',
+        });
+
+        setError('confirmPassword', {
+          message: 'Password doesnt match',
         });
         return;
       }
@@ -95,6 +107,30 @@ export function UsersDialog(): JSX.Element {
             },
           })}
         />
+
+        <div className="grid grid-cols-2 gap-2">
+          <Input
+            type="password"
+            title="Password"
+            placeholder="Password"
+            hasError={!!errors.password}
+            errorMessage={errors.password?.message}
+            {...register('password', {
+              required: 'required field',
+            })}
+          />
+
+          <Input
+            type="password"
+            title="Confirm Password"
+            placeholder="Confirm Password"
+            hasError={!!errors.confirmPassword}
+            errorMessage={errors.confirmPassword?.message}
+            {...register('confirmPassword', {
+              required: 'required field',
+            })}
+          />
+        </div>
 
         <div className="grid grid-cols-3 gap-2">
           <Input

@@ -74,10 +74,12 @@ export const signUp = async (data: FormData) => {
       .upsert(newData, { onConflict: 'id' });
 
     if (error) {
+      console.error(error);
       if (typeof image === 'string') {
         removeImageViaPath(supabase, getImagePath(avatar_url as string));
       }
-      return generalErrorResponse({ error });
+
+      return generalErrorResponse({ error: error.message });
     }
 
     return successResponse({
@@ -86,6 +88,7 @@ export const signUp = async (data: FormData) => {
     });
   } catch (error) {
     const newError = error as Error;
+    console.error(newError);
     return generalErrorResponse({ error: newError.message });
   }
 };

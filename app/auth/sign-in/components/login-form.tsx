@@ -38,7 +38,12 @@ export function LoginForm({
 
         setUserInfo(data as UserForm);
 
-        router.push(`/admin/${data?.id}/dashboard`);
+        if (data?.role === 'admin') {
+          router.push(`/admin/${data?.id}/dashboard`);
+          return;
+        }
+
+        router.push(`/user/${data?.id}/pos`);
       } catch (error) {
         setMessage(error as string);
       }

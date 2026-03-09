@@ -48,16 +48,18 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { data: userData } = await supabase
-    .from('users')
+    .from('profiles')
     .select('role, id')
     .eq('id', user?.id)
     .single();
 
   const baseAdminURL = `/admin/${userData?.id}`;
+  const baseUserURL = `/user/${userData?.id}`;
 
   const protectedAdminRoutes = ['dashboard', 'products', 'profiles'];
 
   const userRestrictedRoutes = ['/admin'];
+  const adminRestrictedRoutes = ['/pos'];
 
   const isProtected = protectedAdminRoutes.some((route) =>
     pathname.endsWith(route),
@@ -65,6 +67,20 @@ export async function updateSession(request: NextRequest) {
 
   if (!user && isProtected) {
     return NextResponse.redirect(new URL('/auth/sign-in', request.url));
+  }
+
+  if (
+    userData?.role === 'user' &&
+    isRestrictedPath(userRestrictedRoutes, pathname)
+  ) {
+    return NextResponse.redirect(new URL(`${baseUserURL}/pos`, request.url));
+  }
+
+  if (
+    userData?.role === 'admin' &&
+    isRestrictedPath(adminRestrictedRoutes, pathname)
+  ) {
+    return NextResponse.redirect(new URL(`${baseAdminURL}/pos`, request.url));
   }
 
   if (
