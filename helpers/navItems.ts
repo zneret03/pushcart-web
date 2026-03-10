@@ -1,5 +1,5 @@
 import { SideMenu } from '@/lib/types/menus';
-import { LayoutDashboard, Clipboard, Users } from 'lucide-react';
+import { LayoutDashboard, Clipboard, Users, Files } from 'lucide-react';
 
 const parentPathName = 'admin';
 
@@ -20,6 +20,12 @@ export const adminMenus = (id: string): SideMenu[] => [
     url: `/${parentPathName}/${id}/profiles`,
     title: 'Profiles',
     icon: Users,
+    isActive: true,
+  },
+  {
+    url: `/${parentPathName}/${id}/categories`,
+    title: 'Categories',
+    icon: Files,
     isActive: true,
   },
 ];

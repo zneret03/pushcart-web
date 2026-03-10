@@ -21,7 +21,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -34,19 +33,19 @@ import {
 import { format, subHours } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useShallow } from 'zustand/shallow';
-import { useProductDialog } from '@/services/products/state/product-dialog';
 import { Pagination } from '@/components/custom/Pagination';
 import { Pagination as PaginationType } from '@/lib/types/pagination';
 import { useRouter, usePathname } from 'next/navigation';
 import { debounce } from 'lodash';
-import { Products } from '@/lib/types/product';
+import { Categories } from '@/lib/types/categories';
+import { useCategoriesDialog } from '@/services/categories/state/categories-state';
 
 interface AwardsData extends PaginationType {
-  products: Products[];
+  categories: Categories[];
 }
 
-export function ProductsTable({
-  products: data,
+export function CategoriesTable({
+  categories: data,
   totalPages,
   currentPage,
   count,
@@ -59,7 +58,7 @@ export function ProductsTable({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-  const { toggleOpen } = useProductDialog(
+  const { toggleOpen } = useCategoriesDialog(
     useShallow((state) => ({ toggleOpen: state.toggleOpenDialog })),
   );
 
@@ -90,7 +89,7 @@ export function ProductsTable({
     router.replace(`${pathname}/products`);
   };
 
-  const columns: ColumnDef<Products>[] = React.useMemo(
+  const columns: ColumnDef<Categories>[] = React.useMemo(
     () => [
       {
         accessorKey: 'name',
@@ -104,35 +103,13 @@ export function ProductsTable({
         },
       },
       {
-        accessorKey: 'descriptions',
-        header: 'Descriptions',
+        accessorKey: 'description',
+        header: 'SKU',
         cell: function ({ row }) {
           return (
-            <div className="font-medium capitalize">{row.original.sku}</div>
-          );
-        },
-      },
-      {
-        accessorKey: 'price',
-        header: 'Price',
-        cell: function ({ row }) {
-          return (
-            <Badge variant="secondary" className="w-auto">
-              <div className="text-ellipsis capitalize">
-                {row.original.price}
-              </div>
-            </Badge>
-          );
-        },
-      },
-      {
-        accessorKey: 'stock_quantity',
-        header: 'Quantity',
-        cell: function ({ row }) {
-          return (
-            <Badge variant="secondary">
-              <div>{row.original.stock_quantity}</div>{' '}
-            </Badge>
+            <div className="font-medium capitalize">
+              {row.original.description}
+            </div>
           );
         },
       },
@@ -234,7 +211,7 @@ export function ProductsTable({
         )}
         {!isDashboard && (
           <Input
-            placeholder="Search user by email..."
+            placeholder="Search user by name..."
             onChange={(event) => onSearch(event)}
             className="max-w-sm"
           />
@@ -278,7 +255,7 @@ export function ProductsTable({
           {!isDashboard && (
             <Button onClick={() => toggleOpen?.(true, 'add', null)}>
               <Plus className="h-5 w-5" />
-              Add Products
+              Add Categories
             </Button>
           )}
         </div>

@@ -144,7 +144,7 @@ ON products FOR DELETE TO authenticated USING (is_admin());
 CREATE TABLE carts (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-    qr_code_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL, 
+    code_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL, 
     status cart_status DEFAULT 'active'::cart_status NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE,

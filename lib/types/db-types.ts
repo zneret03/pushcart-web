@@ -78,25 +78,28 @@ export type Database = {
       };
       carts: {
         Row: {
+          archived_at: string | null;
+          code_token: string;
           created_at: string | null;
           id: string;
-          qr_code_token: string;
           status: Database['public']['Enums']['cart_status'];
           updated_at: string | null;
           user_id: string;
         };
         Insert: {
+          archived_at?: string | null;
+          code_token?: string;
           created_at?: string | null;
           id?: string;
-          qr_code_token?: string;
           status?: Database['public']['Enums']['cart_status'];
           updated_at?: string | null;
           user_id: string;
         };
         Update: {
+          archived_at?: string | null;
+          code_token?: string;
           created_at?: string | null;
           id?: string;
-          qr_code_token?: string;
           status?: Database['public']['Enums']['cart_status'];
           updated_at?: string | null;
           user_id?: string;
@@ -111,9 +114,48 @@ export type Database = {
           },
         ];
       };
+      categories: {
+        Row: {
+          archived_at: string | null;
+          created_at: string | null;
+          description: string | null;
+          id: string;
+          name: string;
+          parent_id: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          archived_at?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          id?: string;
+          name: string;
+          parent_id?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          archived_at?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          id?: string;
+          name?: string;
+          parent_id?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'categories_parent_id_fkey';
+            columns: ['parent_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       orders: {
         Row: {
           admin_id: string;
+          archived_at: string | null;
           cart_id: string;
           created_at: string | null;
           discount_amount: number | null;
@@ -125,6 +167,7 @@ export type Database = {
         };
         Insert: {
           admin_id: string;
+          archived_at?: string | null;
           cart_id: string;
           created_at?: string | null;
           discount_amount?: number | null;
@@ -136,6 +179,7 @@ export type Database = {
         };
         Update: {
           admin_id?: string;
+          archived_at?: string | null;
           cart_id?: string;
           created_at?: string | null;
           discount_amount?: number | null;
@@ -164,40 +208,55 @@ export type Database = {
       };
       products: {
         Row: {
+          archived_at: string | null;
+          category_id: string | null;
           created_at: string | null;
           id: string;
+          image_url: string | File[] | null;
           name: string;
           price: number;
           sku: string;
           stock_quantity: number;
-          image_url: string;
           updated_at: string | null;
         };
         Insert: {
+          archived_at?: string | null;
+          category_id?: string | null;
           created_at?: string | null;
           id?: string;
+          image_url?: string | File[] | null;
           name: string;
           price: number;
           sku?: string;
           stock_quantity?: number;
-          image_url: string | File[];
           updated_at?: string | null;
         };
         Update: {
+          archived_at?: string | null;
+          category_id?: string | null;
           created_at?: string | null;
           id?: string;
+          image_url?: string | File[] | null;
           name?: string;
           price?: number;
           sku?: string;
           stock_quantity?: number;
-          image_url: string;
           updated_at?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'products_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       profiles: {
         Row: {
           address: string | null;
+          archived_at: string | null;
           avatar_url: string | File[] | null;
           created_at: string | null;
           email: string | null;
@@ -207,10 +266,10 @@ export type Database = {
           middle_name: string | null;
           role: string;
           updated_at: string | null;
-          archived_at: string | null;
         };
         Insert: {
           address?: string | null;
+          archived_at?: string | null;
           avatar_url?: string | File[] | null;
           created_at?: string | null;
           email?: string | null;
@@ -220,10 +279,10 @@ export type Database = {
           middle_name?: string | null;
           role: string;
           updated_at?: string | null;
-          archived_at?: string | null;
         };
         Update: {
           address?: string | null;
+          archived_at?: string | null;
           avatar_url?: string | File[] | null;
           created_at?: string | null;
           email?: string | null;
@@ -233,7 +292,6 @@ export type Database = {
           middle_name?: string | null;
           role?: string;
           updated_at?: string | null;
-          archived_at?: string | null;
         };
         Relationships: [];
       };
@@ -375,7 +433,7 @@ export type CompositeTypes<
     ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
     : never;
 
-export const constants = {
+export const Constants = {
   graphql_public: {
     Enums: {},
   },

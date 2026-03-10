@@ -56,7 +56,13 @@ export async function updateSession(request: NextRequest) {
   const baseAdminURL = `/admin/${userData?.id}`;
   const baseUserURL = `/user/${userData?.id}`;
 
-  const protectedAdminRoutes = ['dashboard', 'products', 'profiles'];
+  const protectedAdminRoutes = [
+    'dashboard',
+    'products',
+    'profiles',
+    'pos',
+    'categories',
+  ];
 
   const userRestrictedRoutes = ['/admin'];
   const adminRestrictedRoutes = ['/pos'];
@@ -84,7 +90,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (
-    userData?.role === 'admin' &&
+    userData?.role === 'user' &&
     isRestrictedPath(userRestrictedRoutes, pathname)
   ) {
     return NextResponse.redirect(
