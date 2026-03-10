@@ -6,7 +6,8 @@ import {
   generalErrorResponse,
   successResponse,
 } from '../../helpers/response';
-import { Products } from '@/lib/types/product';
+import { Categories } from '@/lib/types/categories';
+import { addCategory } from '../../model/categories';
 
 export async function GET(req: NextRequest) {
   try {
@@ -21,11 +22,11 @@ export async function GET(req: NextRequest) {
     const limit = url.get('limit') || '';
 
     const { data, error, count, totalPages, currentPage } =
-      await paginatedData<Products>({
+      await paginatedData<Categories>({
         tableName: 'categories',
         supabase,
         columns:
-          'id, name, description, categories!inner(id, name), created_at, updated_at',
+          'id, name, description, subcategories:categories(id, name), created_at, updated_at',
         search: { column: 'name', query: search },
         page,
         perPage,
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
     return successResponse({
       message: 'Successfully fetch categories',
       data: {
-        category: data || null,
+        categories: data || null,
         count,
         totalPages,
         currentPage,
@@ -53,9 +54,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.formData();
+  const body = await req.json();
 
-  if (body.get('type') === 'add-category') {
-    return addProduct(body);
+  if (body.type === 'add-category') {
+    return addCategory(body);
   }
 }

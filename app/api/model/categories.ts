@@ -6,7 +6,12 @@ export const addCategory = async (data: CategoriesInsert) => {
   try {
     const supabase = await createClient();
 
-    const { error } = await supabase.from('categories').insert(data);
+    const newData = {
+      name: data?.name,
+      description: data?.description,
+    };
+
+    const { error } = await supabase.from('categories').insert(newData);
 
     if (error) {
       return generalErrorResponse({ error: error.message });
