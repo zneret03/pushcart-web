@@ -2,6 +2,7 @@ import { Container } from '@/components/custom/Container';
 import { CategoriesTable } from './components/CategoriesTable';
 import { getCategories } from '@/services/categories/categories.services';
 import { CategoryDialog } from './components/dialogs/CategoryDialog';
+import { SubCategories } from './components/dialogs/SubCategories';
 import { JSX } from 'react';
 
 export default async function Categories({
@@ -30,6 +31,7 @@ export default async function Categories({
       />
 
       <CategoryDialog />
+      <SubCategories />
     </Container>
   );
 }

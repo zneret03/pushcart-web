@@ -3,7 +3,12 @@ import { createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
 import { Categories } from '@/lib/types/categories';
 
-type CategoriesDialogType = 'add' | 'edit' | 'delete' | null;
+type CategoriesDialogType =
+  | 'add'
+  | 'add-subcategories'
+  | 'edit'
+  | 'delete'
+  | null;
 
 export type AttendanceData = Categories;
 

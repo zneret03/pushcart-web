@@ -46,7 +46,7 @@ export function AuthProvider({ children }: AuthProviderType) {
     });
 
     return () => {
-      subscription.unsubscribe;
+      subscription.unsubscribe();
     };
   }, [supabase, setMount]);
 

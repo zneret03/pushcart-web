@@ -8,6 +8,7 @@ import {
 } from '../../helpers/response';
 import { Categories } from '@/lib/types/categories';
 import { addCategory } from '../../model/categories';
+import { addSubcategories } from '../../model/categories';
 
 export async function GET(req: NextRequest) {
   try {
@@ -58,5 +59,9 @@ export async function POST(req: NextRequest) {
 
   if (body.type === 'add-category') {
     return addCategory(body);
+  }
+
+  if (body.type === 'add-subcategories') {
+    return addSubcategories(body);
   }
 }

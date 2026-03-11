@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { format, subHours } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useShallow } from 'zustand/shallow';
@@ -39,6 +40,13 @@ import { useRouter, usePathname } from 'next/navigation';
 import { debounce } from 'lodash';
 import { Categories } from '@/lib/types/categories';
 import { useCategoriesDialog } from '@/services/categories/state/categories-state';
+
+interface CategoriesSubCategories extends Categories {
+  subcategories: {
+    id: string;
+    name: string;
+  }[];
+}
 
 interface AwardsData extends PaginationType {
   categories: Categories[];
@@ -89,7 +97,7 @@ export function CategoriesTable({
     router.replace(`${pathname}/products`);
   };
 
-  const columns: ColumnDef<Categories>[] = React.useMemo(
+  const columns: ColumnDef<CategoriesSubCategories>[] = React.useMemo(
     () => [
       {
         accessorKey: 'name',
@@ -109,6 +117,25 @@ export function CategoriesTable({
           return (
             <div className="font-medium capitalize">
               {row.original.description}
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: 'subcategories',
+        header: 'Subcategories',
+        cell: function ({ row }) {
+          return (
+            <div
+              className="flex cursor-pointer items-center gap-1 font-medium capitalize"
+              onClick={() =>
+                toggleOpen?.(true, 'add-subcategories', { ...row.original })
+              }
+            >
+              <Badge variant="secondary">
+                {row?.original?.subcategories[0]?.name ?? 'N/A'}
+              </Badge>
+              <ChevronDown size="14" className="text-gray-500" />
             </div>
           );
         },
@@ -181,7 +208,7 @@ export function CategoriesTable({
         ),
       },
     ],
-    [],
+    [toggleOpen],
   );
 
   const table = useReactTable({

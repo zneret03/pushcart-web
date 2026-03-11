@@ -22,7 +22,7 @@ import { CustomButton } from '@/components/custom/CustomButton';
 import { useShallow } from 'zustand/react/shallow';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { UsersInsert } from '@/lib/types/users';
+import { UserInsertType, UsersInsert } from '@/lib/types/users';
 import { useUserDialog } from '@/services/users/state/user-dialog';
 import { Input } from '@/components/ui/input';
 import { regularEmailRegex } from '@/helpers/reusableRegex';
@@ -67,13 +67,16 @@ export function EditUserDialog(): JSX.Element {
         return;
       }
 
-      await signUp({ ...data, role: data.role.toLocaleLowerCase() });
+      await signUp({
+        ...data,
+        role: data.role.toLocaleLowerCase(),
+      } as UserInsertType);
       resetVariables();
     });
   };
 
   useEffect(() => {
-    if (!!data) {
+    if (data) {
       reset({
         email: data.email as string,
         first_name: data.first_name as string,
