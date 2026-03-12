@@ -14,21 +14,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { CustomButton } from '@/components/custom/CustomButton';
 import { useShallow } from 'zustand/react/shallow';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { SubCategories as SubCategoriesType } from '@/lib/types/categories';
-import { addSubcategories } from '@/services/categories/categories.services';
+import { CategoriesUpdate } from '@/lib/types/categories';
+import { editCategory } from '@/services/categories/categories.services';
 import { useCategoriesDialog } from '@/services/categories/state/categories-state';
 
-export function SubCategories(): JSX.Element {
+export function EditCategoryDialog(): JSX.Element {
   const [isPending, startTransition] = useTransition();
   const {
     handleSubmit,
     register,
     formState: { errors },
     reset,
-    control,
-  } = useForm<SubCategoriesType>();
+  } = useForm<CategoriesUpdate>();
 
   const router = useRouter();
 
@@ -43,13 +42,14 @@ export function SubCategories(): JSX.Element {
 
   const resetVariables = (): void => {
     toggleOpen?.(false, null, null);
-    reset();
     router.refresh();
   };
 
-  const onSubmit = async (data: SubCategoriesType): Promise<void> => {
+  const onSubmit = async (categoryData: CategoriesUpdate): Promise<void> => {
     startTransition(async () => {
-      await addSubcategories(data);
+      await editCategory({ ...categoryData, id: data?.id as string } as {
+        [key: string]: string;
+      });
       resetVariables();
     });
   };
@@ -57,14 +57,13 @@ export function SubCategories(): JSX.Element {
   useEffect(() => {
     if (data) {
       reset({
-        parent_id: data?.id,
         name: data?.name,
         description: data?.description,
       });
     }
   }, [data]);
 
-  const isOpenDialog = open && type === 'add-subcategories';
+  const isOpenDialog = open && type === 'edit';
 
   return (
     <Dialog
@@ -73,22 +72,8 @@ export function SubCategories(): JSX.Element {
     >
       <DialogContent className="sm:max-w-[40rem]">
         <DialogHeader>
-          <DialogTitle>Add Sub Categories</DialogTitle>
+          <DialogTitle>Edit Category Dialog</DialogTitle>
         </DialogHeader>
-
-        <Controller
-          name="name"
-          control={control}
-          render={({ field: { value } }) => (
-            <Input
-              title="Parent Category"
-              placeholder="parent category"
-              value={value}
-              disabled={true}
-              className="cursor-not-allowed"
-            />
-          )}
-        />
 
         <Input
           title="Name"

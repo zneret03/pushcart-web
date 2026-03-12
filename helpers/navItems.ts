@@ -17,15 +17,15 @@ export const adminMenus = (id: string): SideMenu[] => [
     isActive: true,
   },
   {
-    url: `/${parentPathName}/${id}/profiles`,
-    title: 'Profiles',
-    icon: Users,
-    isActive: true,
-  },
-  {
     url: `/${parentPathName}/${id}/categories`,
     title: 'Categories',
     icon: Files,
+    isActive: true,
+  },
+  {
+    url: `/${parentPathName}/${id}/profiles`,
+    title: 'Profiles',
+    icon: Users,
     isActive: true,
   },
 ];

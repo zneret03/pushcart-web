@@ -67,7 +67,7 @@ export const addSubcategories = async (
 
 export const deleteCategory = async (id: string): Promise<void> => {
   try {
-    await axiosService.delete(`/api/protected/category/${id}`);
+    await axiosService.delete(`/api/protected/categories/${id}`);
 
     toast('Successfully', {
       description: 'Successfully Delete categories.',
@@ -88,7 +88,7 @@ export const editCategory = async (data: { [key: string]: string }) => {
       `/api/protected/categories/${data.id}`,
       {
         name: data.name,
-        type: 'edit-leave-categories',
+        type: 'edit-categories',
       },
     );
 

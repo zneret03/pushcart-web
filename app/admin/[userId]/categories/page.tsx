@@ -3,6 +3,8 @@ import { CategoriesTable } from './components/CategoriesTable';
 import { getCategories } from '@/services/categories/categories.services';
 import { CategoryDialog } from './components/dialogs/CategoryDialog';
 import { SubCategories } from './components/dialogs/SubCategories';
+import { DeleteCategoryDialog } from './components/dialogs/DeleteCategory';
+import { EditCategoryDialog } from './components/dialogs/EditCategory';
 import { JSX } from 'react';
 
 export default async function Categories({
@@ -32,6 +34,8 @@ export default async function Categories({
 
       <CategoryDialog />
       <SubCategories />
+      <DeleteCategoryDialog />
+      <EditCategoryDialog />
     </Container>
   );
 }

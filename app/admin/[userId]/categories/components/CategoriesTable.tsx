@@ -38,18 +38,11 @@ import { Pagination } from '@/components/custom/Pagination';
 import { Pagination as PaginationType } from '@/lib/types/pagination';
 import { useRouter, usePathname } from 'next/navigation';
 import { debounce } from 'lodash';
-import { Categories } from '@/lib/types/categories';
 import { useCategoriesDialog } from '@/services/categories/state/categories-state';
-
-interface CategoriesSubCategories extends Categories {
-  subcategories: {
-    id: string;
-    name: string;
-  }[];
-}
+import { CategoriesSubCategories } from '@/services/categories/state/categories-state';
 
 interface AwardsData extends PaginationType {
-  categories: Categories[];
+  categories: CategoriesSubCategories[];
 }
 
 export function CategoriesTable({
@@ -112,7 +105,7 @@ export function CategoriesTable({
       },
       {
         accessorKey: 'description',
-        header: 'SKU',
+        header: 'Description',
         cell: function ({ row }) {
           return (
             <div className="font-medium capitalize">

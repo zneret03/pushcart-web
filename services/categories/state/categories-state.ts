@@ -10,7 +10,15 @@ type CategoriesDialogType =
   | 'delete'
   | null;
 
-export type AttendanceData = Categories;
+export interface CategoriesSubCategories extends Omit<
+  Categories,
+  'archived_at'
+> {
+  subcategories: {
+    id: string;
+    name: string;
+  }[];
+}
 
 export interface CategoriesDialog {
   open: boolean;
@@ -18,9 +26,9 @@ export interface CategoriesDialog {
   toggleOpenDialog?: (
     isOpen: boolean,
     type: CategoriesDialogType,
-    data: Categories | null,
+    data: CategoriesSubCategories | null,
   ) => void;
-  data: Partial<Categories> | null;
+  data: Partial<CategoriesSubCategories> | null;
 }
 
 const initialState: CategoriesDialog = {
@@ -36,7 +44,7 @@ export const useCategoriesDialog = create<CategoriesDialog>()(
       toggleOpenDialog: (
         isOpen: boolean,
         type: CategoriesDialogType,
-        data: Categories | null,
+        data: CategoriesSubCategories | null,
       ) => {
         set((state) => ({
           ...state,

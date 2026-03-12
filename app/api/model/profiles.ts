@@ -137,7 +137,7 @@ export const updateUserInfo = async (body: UpdateUserInfo, id: string) => {
     //remove old avatar
     if (isEqualAvatar) {
       const image = await uploadFileImage(
-        [body.avatar_url] as File[],
+        [body.avatar_url] as unknown as File[],
         body.email as string,
         'avatar',
       );

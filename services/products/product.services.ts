@@ -21,7 +21,7 @@ export const addProduct = async (data: ProductsInsert) => {
     const { name, price, stock_quantity, image_url } = data;
 
     const formData = new FormData();
-    formData.append('image_url', image_url[0]);
+    formData.append('image_url', image_url![0]);
     formData.append('name', name);
     formData.append('price', price.toString());
     formData.append('stock_quantity', stock_quantity?.toString() as string);
