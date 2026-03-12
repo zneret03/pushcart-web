@@ -1,9 +1,14 @@
 import { persist } from 'zustand/middleware';
 import { createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
+import { Categories } from '@/lib/types/categories';
 import { Products } from '@/lib/types/product';
 
 type ProductDialogType = 'add' | 'edit' | 'delete' | null;
+
+interface ProductDialogWithCategories extends Products {
+  categories: Pick<Categories, 'id' | 'name'>;
+}
 
 export type AttendanceData = Products;
 
@@ -13,9 +18,9 @@ export interface ProductDialog {
   toggleOpenDialog?: (
     isOpen: boolean,
     type: ProductDialogType,
-    data: Products | null,
+    data: ProductDialogWithCategories | null,
   ) => void;
-  data: Partial<Products> | null;
+  data: Partial<ProductDialogWithCategories> | null;
 }
 
 const initialState: ProductDialog = {
@@ -31,7 +36,7 @@ export const useProductDialog = create<ProductDialog>()(
       toggleOpenDialog: (
         isOpen: boolean,
         type: ProductDialogType,
-        data: Products | null,
+        data: ProductDialogWithCategories | null,
       ) => {
         set((state) => ({
           ...state,

@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ['image/avif', 'image/webp'],
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [new URL(`${process.env.NEXT_IMAGE_PUBLIC_URL}`)],
   },
   async redirects() {

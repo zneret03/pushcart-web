@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         tableName: 'products',
         supabase,
         columns:
-          'id, name, sku, price, stock_quantity, image_url, created_at, updated_at',
+          'id, name, sku, price, categories(id, name), stock_quantity, image_url, created_at, updated_at',
         search: { column: 'name', query: search },
         page,
         perPage,

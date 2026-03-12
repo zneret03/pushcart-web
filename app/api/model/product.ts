@@ -9,6 +9,7 @@ export const addProduct = async (data: FormData) => {
     const name = data.get('name');
     const price = data.get('price');
     const stock_quantity = data.get('stock_quantity');
+    const category_id = data.get('category_id');
 
     const supabase = await createClient();
 
@@ -23,6 +24,7 @@ export const addProduct = async (data: FormData) => {
       name,
       price: Number(price),
       stock_quantity: Number(stock_quantity),
+      category_id: category_id,
     };
 
     const { data: productData, error } = await supabase

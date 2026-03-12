@@ -18,7 +18,7 @@ export const getProducts = async (params: string) => {
 
 export const addProduct = async (data: ProductsInsert) => {
   try {
-    const { name, price, stock_quantity, image_url } = data;
+    const { name, price, stock_quantity, image_url, category_id } = data;
 
     const formData = new FormData();
     formData.append('image_url', image_url![0]);
@@ -26,6 +26,7 @@ export const addProduct = async (data: ProductsInsert) => {
     formData.append('price', price.toString());
     formData.append('stock_quantity', stock_quantity?.toString() as string);
     formData.append('type', 'add-product');
+    formData.append('category_id', category_id as string);
 
     const response = await axiosService.post<AxiosResponse<ProductsInsert>>(
       '/api/protected/products',

@@ -9,6 +9,14 @@ import {
   DialogTitle,
   DialogClose,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { ImageUpload } from '@/components/custom/ImageUpload';
 import { Controller } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
@@ -20,8 +28,15 @@ import { useRouter } from 'next/navigation';
 import { ProductsInsert } from '@/lib/types/product';
 import { addProduct } from '@/services/products/product.services';
 import { useProductDialog } from '@/services/products/state/product-dialog';
+import { CategoriesSubCategories } from '@/services/categories/state/categories-state';
 
-export function ProductsDialog(): JSX.Element {
+interface ProductDialogTypes {
+  categories: CategoriesSubCategories[];
+}
+
+export function ProductsDialog({
+  categories,
+}: ProductDialogTypes): JSX.Element {
   const [isPending, startTransition] = useTransition();
   const {
     handleSubmit,
@@ -31,6 +46,11 @@ export function ProductsDialog(): JSX.Element {
   } = useForm<ProductsInsert>();
 
   const router = useRouter();
+
+  const categoriesMenu = categories.map((item) => ({
+    id: item.id,
+    name: item.name,
+  }));
 
   const { open, toggleOpen, type } = useProductDialog(
     useShallow((state) => ({
@@ -86,16 +106,48 @@ export function ProductsDialog(): JSX.Element {
           />
         </div>
 
-        <Input
-          type="number"
-          title="Quantity"
-          placeholder="product quantity"
-          {...register('stock_quantity', {
-            required: 'this is required',
-          })}
-          hasError={!!errors?.stock_quantity}
-          errorMessage={errors?.stock_quantity?.message}
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <Input
+            type="number"
+            title="Quantity"
+            placeholder="product quantity"
+            {...register('stock_quantity', {
+              required: 'this is required',
+            })}
+            hasError={!!errors?.stock_quantity}
+            errorMessage={errors?.stock_quantity?.message}
+          />
+
+          <div className="space-y-2">
+            <Label className="mb-1.5 text-sm font-medium">Category*</Label>
+            <Controller
+              name="category_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  value={value as string}
+                  onValueChange={(e) => onChange(e)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categoriesMenu.map((item, index) => (
+                      <SelectItem key={`${item}-${index}`} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {!!errors.parent_id && (
+              <h1 className="text-sm text-red-500">
+                {errors.parent_id.message}
+              </h1>
+            )}
+          </div>
+        </div>
 
         <div className="space-y-2">
           <Controller
