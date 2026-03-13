@@ -6,7 +6,7 @@ import { Products } from '@/lib/types/product';
 
 type ProductDialogType = 'add' | 'edit' | 'delete' | null;
 
-interface ProductDialogWithCategories extends Products {
+export interface ProductDialogWithCategories extends Products {
   categories: Pick<Categories, 'id' | 'name'>;
 }
 

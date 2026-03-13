@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { axiosService } from '@/app/api/axios-client';
-import { UserInsertType } from '@/lib/types/users';
+import { UserInsertType, UpdateUser } from '@/lib/types/users';
 import { toast } from 'sonner';
+
+interface UpdateUserInfo extends UpdateUser {
+  oldAvatar: string;
+}
 
 export const getProfiles = async (params: string) => {
   try {
@@ -23,17 +27,19 @@ export const signUp = async ({
   role,
   email,
   password,
+  address,
 }: UserInsertType) => {
   try {
     const formData = new FormData();
     const newAvatar = avatar_url as File[];
-    formData.append('avatar', newAvatar[0]);
+    formData.append('avatar_url', newAvatar[0]);
     formData.append('first_name', first_name as string);
     formData.append('last_name', last_name as string);
     formData.append('middle_name', middle_name as string);
     formData.append('email', email as string);
     formData.append('role', role as string);
     formData.append('type', 'sign-up');
+    formData.append('address', address as string);
     formData.append('password', password);
 
     const response = await axiosService.post(
@@ -78,6 +84,55 @@ export const revokeOrReinstate = async (
       toast.error('ERROR!', {
         description: e.response?.data.error,
       });
+      throw e.response?.data.error;
+    }
+  }
+};
+
+export const updateUser = async (
+  {
+    avatar_url,
+    first_name,
+    last_name,
+    middle_name,
+    role,
+    email,
+    address,
+    oldAvatar,
+  }: UpdateUserInfo,
+  userId: string,
+) => {
+  try {
+    const formData = new FormData();
+    const newAvatar = avatar_url as File[];
+
+    formData.append('oldAvatar', oldAvatar);
+    formData.append('avatar_url', newAvatar[0]);
+    formData.append('first_name', first_name as string);
+    formData.append('last_name', last_name as string);
+    formData.append('middle_name', middle_name as string);
+    formData.append('email', email as string);
+    formData.append('role', role as string);
+    formData.append('type', 'update-user-info');
+    formData.append('address', address as string);
+
+    const response = await axiosService.put(
+      `/api/protected/profiles/update/${userId}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    toast('Successfully', {
+      description: 'Successfully updated product',
+    });
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
       throw e.response?.data.error;
     }
   }

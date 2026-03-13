@@ -154,11 +154,7 @@ export function UsersDialog(): JSX.Element {
           <Input
             title="Middle Name"
             placeholder="Middle Name"
-            hasError={!!errors.middle_name}
-            errorMessage={errors.middle_name?.message}
-            {...register('middle_name', {
-              required: 'required field',
-            })}
+            {...register('middle_name')}
           />
         </div>
 

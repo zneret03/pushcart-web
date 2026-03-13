@@ -34,7 +34,10 @@ import {
 import { format, subHours } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useShallow } from 'zustand/shallow';
-import { useProductDialog } from '@/services/products/state/product-dialog';
+import {
+  ProductDialogWithCategories,
+  useProductDialog,
+} from '@/services/products/state/product-dialog';
 import { Pagination } from '@/components/custom/Pagination';
 import { Pagination as PaginationType } from '@/lib/types/pagination';
 import { useRouter, usePathname } from 'next/navigation';
@@ -90,7 +93,7 @@ export function ProductsTable({
     router.replace(`${pathname}/products`);
   };
 
-  const columns: ColumnDef<Products>[] = React.useMemo(
+  const columns: ColumnDef<Omit<Products, 'archived_at'>>[] = React.useMemo(
     () => [
       {
         accessorKey: 'name',
@@ -183,7 +186,7 @@ export function ProductsTable({
                 onClick={() =>
                   toggleOpen?.(true, 'edit', {
                     ...row.original,
-                  })
+                  } as ProductDialogWithCategories)
                 }
               >
                 <Pencil />
@@ -193,7 +196,7 @@ export function ProductsTable({
                 onClick={() =>
                   toggleOpen?.(true, 'delete', {
                     ...row.original,
-                  })
+                  } as ProductDialogWithCategories)
                 }
               >
                 <Trash />

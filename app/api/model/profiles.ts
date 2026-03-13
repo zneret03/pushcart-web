@@ -8,16 +8,10 @@ import { getImagePath } from './image';
 import { uploadFileImage } from '../helpers/uploadImage';
 import { createClient } from '@/config';
 import { removeImageViaPath } from './image';
-import { UpdateUser } from '@/lib/types/users';
 
 interface RevokeUser {
   banUntil: string;
   archivedAt: Date | null;
-}
-
-interface UpdateUserInfo extends UpdateUser {
-  oldAvatar: string;
-  avatar: string;
 }
 
 export const signUp = async (data: FormData) => {
@@ -128,31 +122,45 @@ export const revokeUser = async (
   }
 };
 
-export const updateUserInfo = async (body: UpdateUserInfo, id: string) => {
+export const updateUserInfo = async (data: FormData, id: string) => {
   try {
     const supabase = await createClient();
-    const isEqualAvatar = body.oldAvatar !== body.avatar && !!body.oldAvatar;
+    const isEqualAvatar =
+      data.get('oldAvatar') !== data.get('avatar_url') &&
+      !!data.get('oldAvatar');
     let imageUrl;
+
+    const avatarUrl = data.get('avatar_url');
+    const email = data.get('email');
+    const first_name = data.get('first_name');
+    const last_name = data.get('last_name');
+    const middle_name = data.get('middle_name');
+    const address = data.get('address');
+    const role = data.get('role');
 
     //remove old avatar
     if (isEqualAvatar) {
       const image = await uploadFileImage(
-        [body.avatar_url] as unknown as File[],
-        body.email as string,
+        [avatarUrl] as unknown as File[],
+        email as string,
         'avatar',
       );
 
       imageUrl = image;
-      removeImageViaPath(supabase, getImagePath(body.oldAvatar as string));
+      removeImageViaPath(
+        supabase,
+        getImagePath(data.get('oldAvatar') as string),
+      );
     }
 
     const newData = {
-      first_name: body.first_name,
-      last_name: body.last_name,
-      middle_name: body.last_name,
-      address: body.address,
-      role: body.role,
       avatar_url: imageUrl,
+      first_name,
+      last_name,
+      middle_name,
+      address,
+      email,
+      role,
     };
 
     const { error: userError } = await supabase
@@ -170,8 +178,11 @@ export const updateUserInfo = async (body: UpdateUserInfo, id: string) => {
     }
 
     if (userError) {
-      if (typeof body.oldAvatar === 'string') {
-        removeImageViaPath(supabase, getImagePath(body.oldAvatar as string));
+      if (typeof data.get('oldAvatar') === 'string') {
+        removeImageViaPath(
+          supabase,
+          getImagePath(data.get('oldAvatar') as string),
+        );
       }
       return badRequestResponse({ error: userError.message || '' });
     }

@@ -22,13 +22,13 @@ import { CustomButton } from '@/components/custom/CustomButton';
 import { useShallow } from 'zustand/react/shallow';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { UserInsertType, UsersInsert } from '@/lib/types/users';
+import { UpdateUserInfo, UpdateUser } from '@/lib/types/users';
 import { useUserDialog } from '@/services/users/state/user-dialog';
 import { Input } from '@/components/ui/input';
 import { regularEmailRegex } from '@/helpers/reusableRegex';
 import { ImageUpload } from '@/components/custom/ImageUpload';
 import { Controller } from 'react-hook-form';
-import { signUp } from '@/services/users/users.services';
+import { updateUser } from '@/services/users/users.services';
 import { roleTypes } from '../../helpers/constants';
 
 export function EditUserDialog(): JSX.Element {
@@ -40,7 +40,7 @@ export function EditUserDialog(): JSX.Element {
     register,
     setError,
     reset,
-  } = useForm<UsersInsert>();
+  } = useForm<UpdateUser>();
 
   const router = useRouter();
 
@@ -58,19 +58,23 @@ export function EditUserDialog(): JSX.Element {
     router.refresh();
   };
 
-  const onSubmit = async (data: UsersInsert): Promise<void> => {
+  const onSubmit = async (userData: UpdateUser): Promise<void> => {
     startTransition(async () => {
-      if (!data.avatar_url) {
+      if (!userData?.avatar_url) {
         setError('avatar_url', {
           message: 'required field',
         });
         return;
       }
 
-      await signUp({
-        ...data,
-        role: data.role.toLocaleLowerCase(),
-      } as UserInsertType);
+      await updateUser(
+        {
+          ...userData,
+          oldAvatar: data?.avatar_url,
+          role: userData.role && userData.role.toLocaleLowerCase(),
+        } as UpdateUserInfo,
+        data?.id as string,
+      );
       resetVariables();
     });
   };
@@ -106,6 +110,7 @@ export function EditUserDialog(): JSX.Element {
           placeholder="Email"
           hasError={!!errors.email}
           errorMessage={errors.email?.message}
+          disabled={true}
           {...register('email', {
             required: 'required field',
             pattern: {
@@ -137,11 +142,7 @@ export function EditUserDialog(): JSX.Element {
           <Input
             title="Middle Name"
             placeholder="Middle Name"
-            hasError={!!errors.middle_name}
-            errorMessage={errors.middle_name?.message}
-            {...register('middle_name', {
-              required: 'required field',
-            })}
+            {...register('middle_name')}
           />
         </div>
 
@@ -191,6 +192,9 @@ export function EditUserDialog(): JSX.Element {
             render={({ field: { onChange, value } }) => (
               <ImageUpload
                 title="Image"
+                filePreview={
+                  (typeof value === 'string' && (value as string)) || null
+                }
                 pendingFiles={value as File[]}
                 isLoading={isPending}
                 acceptedImageCount={1}

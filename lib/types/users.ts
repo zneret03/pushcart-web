@@ -19,3 +19,7 @@ export type UserForm = Omit<
 export interface SignIn extends UserForm {
   password: string;
 }
+
+export interface UpdateUserInfo extends UpdateUser {
+  oldAvatar: string;
+}
