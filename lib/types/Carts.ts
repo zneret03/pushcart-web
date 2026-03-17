@@ -8,3 +8,5 @@ export interface CartItemsProducts extends CartItems {
   products: Products;
   carts: Carts[];
 }
+
+export type OrderSteps = 'calculations' | 'orders';

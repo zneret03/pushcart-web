@@ -145,7 +145,7 @@ CREATE TABLE carts (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
     code_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL, 
-    status cart_status DEFAULT 'active'::cart_status NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('unpaid', 'paid', 'active')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE,
     archived_at TIMESTAMP WITH TIME ZONE
@@ -174,8 +174,7 @@ CREATE TABLE cart_items (
     product_id UUID REFERENCES products(id) ON DELETE RESTRICT NOT NULL,
     quantity INT NOT NULL CHECK (quantity > 0),
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(cart_id, product_id)
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Trigger to update timestamp on cart_items
