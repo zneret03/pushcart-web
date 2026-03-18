@@ -3,6 +3,7 @@ import { getCartItemsById } from '@/services/cart/cart.services';
 import { getCarts } from '@/services/cart/cart.services';
 import { Orders } from './components/Orders';
 import { CartItemsProducts, Carts } from '@/lib/types/Carts';
+import { OrdersDialog } from './components/dialogs/CompleteOrderDialog';
 
 export default async function PostPage({
   searchParams,
@@ -24,6 +25,8 @@ export default async function PostPage({
         carts={carts as Carts[]}
         cartItems={cartItems as CartItemsProducts[]}
       />
+
+      <OrdersDialog />
     </div>
   );
 }

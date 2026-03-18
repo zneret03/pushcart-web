@@ -28,6 +28,7 @@ import { useRouter } from 'next/navigation';
 import { CartItemsProducts } from '@/lib/types/Carts';
 import { updateItemQuantity } from '../helpers/updateItemQuantity';
 import { updateCartItemsQuantity } from '@/services/cart/cart.services';
+import { toast } from 'sonner';
 import { debounce } from 'lodash';
 
 interface OrdersType {
@@ -49,6 +50,13 @@ export function OrdersTable({ cartItems: data }: OrdersType) {
   const onDebounce = React.useMemo(
     () =>
       debounce((id: string, delta: number, currentCount: number) => {
+        if (currentCount <= 0) {
+          toast('Error', {
+            description: 'quantity should not be one',
+          });
+          return;
+        }
+
         setCartItems((prev) => updateItemQuantity(prev, id, delta));
         updateCartItemsQuantity(currentCount, id);
         router.refresh();

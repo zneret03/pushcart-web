@@ -221,6 +221,9 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins manage orders" 
 ON orders FOR ALL TO authenticated USING (is_admin());
 
+CREATE POLICY "Users can insert users" 
+ON profiles FOR INSERT TO authenticated WITH CHECK (true);
+
 CREATE POLICY "Users view own orders" 
 ON orders FOR SELECT TO authenticated 
 USING (EXISTS (SELECT 1 FROM carts WHERE id = orders.cart_id AND user_id = auth.uid()));
