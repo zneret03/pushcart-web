@@ -24,6 +24,7 @@ import {
 import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { CartItemsProducts } from '@/lib/types/Carts';
 import { updateItemQuantity } from '../helpers/updateItemQuantity';
 import { updateCartItemsQuantity } from '@/services/cart/cart.services';
@@ -43,12 +44,14 @@ export function OrdersTable({ cartItems: data }: OrdersType) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [cartItems, setCartItems] = React.useState<CartItemsProducts[]>(data);
 
+  const router = useRouter();
+
   const onDebounce = React.useMemo(
     () =>
       debounce((id: string, delta: number, currentCount: number) => {
         setCartItems((prev) => updateItemQuantity(prev, id, delta));
-
         updateCartItemsQuantity(currentCount, id);
+        router.refresh();
       }, 100),
     [],
   );
