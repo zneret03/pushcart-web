@@ -189,6 +189,10 @@ CREATE POLICY "Users view own cart items, admins view all"
 ON cart_items FOR SELECT TO authenticated 
 USING (EXISTS (SELECT 1 FROM carts WHERE id = cart_items.cart_id AND (user_id = auth.uid() OR is_admin())));
 
+CREATE POLICY "Users and admin can update cart items" 
+ON cart_items FOR UPDATE TO authenticated 
+USING (EXISTS (SELECT 1 FROM carts WHERE id = cart_items.cart_id AND user_id = auth.uid() AND status = 'unpaid'));
+
 CREATE POLICY "Users manage active cart items" 
 ON cart_items FOR ALL TO authenticated 
 USING (EXISTS (SELECT 1 FROM carts WHERE id = cart_items.cart_id AND user_id = auth.uid() AND status = 'active'));

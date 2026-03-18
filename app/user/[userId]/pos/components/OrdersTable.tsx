@@ -21,8 +21,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Plus, Minus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { CartItemsProducts } from '@/lib/types/Carts';
+import { updateItemQuantity } from '../helpers/updateItemQuantity';
+import { updateCartItemsQuantity } from '@/services/cart/cart.services';
+import { debounce } from 'lodash';
 
 interface OrdersType {
   cartItems: CartItemsProducts[];
@@ -36,6 +41,24 @@ export function OrdersTable({ cartItems: data }: OrdersType) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [cartItems, setCartItems] = React.useState<CartItemsProducts[]>(data);
+
+  const onDebounce = React.useMemo(
+    () =>
+      debounce((id: string, delta: number, currentCount: number) => {
+        setCartItems((prev) => updateItemQuantity(prev, id, delta));
+
+        updateCartItemsQuantity(currentCount, id);
+      }, 100),
+    [],
+  );
+
+  const adjustQuantity = React.useCallback(
+    (id: string, delta: number, currentCount: number) => {
+      onDebounce(id, delta, currentCount);
+    },
+    [onDebounce],
+  );
 
   const columns: ColumnDef<CartItemsProducts>[] = React.useMemo(
     () => [
@@ -63,7 +86,27 @@ export function OrdersTable({ cartItems: data }: OrdersType) {
         cell: function ({ row }) {
           return (
             <div className="flex items-center gap-2">
+              <Button
+                size="xs"
+                onClick={() => {
+                  adjustQuantity(
+                    row.original.id,
+                    -1,
+                    row.original.quantity - 1,
+                  );
+                }}
+              >
+                <Minus size="2" />
+              </Button>
               <div className="font-medium">{row.original?.quantity}</div>
+              <Button
+                size="xs"
+                onClick={() => {
+                  adjustQuantity(row.original.id, 1, row.original.quantity + 1);
+                }}
+              >
+                <Plus />
+              </Button>
             </div>
           );
         },
@@ -84,7 +127,7 @@ export function OrdersTable({ cartItems: data }: OrdersType) {
   );
 
   const table = useReactTable({
-    data,
+    data: cartItems,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -101,6 +144,10 @@ export function OrdersTable({ cartItems: data }: OrdersType) {
       rowSelection,
     },
   });
+
+  React.useEffect(() => {
+    setCartItems(data);
+  }, [data]);
 
   return (
     <div className="w-full">

@@ -34,3 +34,28 @@ export const getCartItemsById = async (cartId: string): Promise<void> => {
     }
   }
 };
+
+export const updateCartItemsQuantity = async (
+  quantity: number,
+  id: string,
+): Promise<void> => {
+  try {
+    const response = await axiosService.put(`/api/protected/cart_items/${id}`, {
+      quantity,
+      type: 'update-quantity',
+    });
+
+    toast('Successfully', {
+      description: response.data.message,
+    });
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
