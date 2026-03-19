@@ -160,9 +160,9 @@ export function EditProductsDialog({
                 </Select>
               )}
             />
-            {!!errors.parent_id && (
+            {!!errors.category_id && (
               <h1 className="text-sm text-red-500">
-                {errors.parent_id.message}
+                {errors.category_id.message}
               </h1>
             )}
           </div>

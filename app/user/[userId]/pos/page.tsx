@@ -3,14 +3,16 @@ import { getCartItemsById } from '@/services/cart/cart.services';
 import { getCarts } from '@/services/cart/cart.services';
 import { Orders } from './components/Orders';
 import { CartItemsProducts, Carts } from '@/lib/types/Carts';
-import { OrdersDialog } from './components/dialogs/CompleteOrderDialog';
 
 export default async function PostPage({
   searchParams,
+  params,
 }: {
   searchParams: Promise<{ cartId: string }>;
+  params: Promise<{ userId: string }>;
 }): Promise<JSX.Element> {
   const { cartId } = await searchParams;
+  const { userId } = await params;
   const carts = await getCarts();
   const cartItems = !cartId ? [] : await getCartItemsById(cartId);
 
@@ -24,9 +26,9 @@ export default async function PostPage({
       <Orders
         carts={carts as Carts[]}
         cartItems={cartItems as CartItemsProducts[]}
+        cartId={cartId}
+        userId={userId}
       />
-
-      <OrdersDialog />
     </div>
   );
 }

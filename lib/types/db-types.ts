@@ -82,7 +82,7 @@ export type Database = {
           code_token: string;
           created_at: string | null;
           id: string;
-          status: Database['public']['Enums']['cart_status'];
+          status: string;
           updated_at: string | null;
           user_id: string;
         };
@@ -91,7 +91,7 @@ export type Database = {
           code_token?: string;
           created_at?: string | null;
           id?: string;
-          status?: Database['public']['Enums']['cart_status'];
+          status: string;
           updated_at?: string | null;
           user_id: string;
         };
@@ -100,7 +100,7 @@ export type Database = {
           code_token?: string;
           created_at?: string | null;
           id?: string;
-          status?: Database['public']['Enums']['cart_status'];
+          status?: string;
           updated_at?: string | null;
           user_id?: string;
         };
@@ -154,7 +154,6 @@ export type Database = {
       };
       orders: {
         Row: {
-          admin_id: string;
           archived_at: string | null;
           cart_id: string;
           created_at: string | null;
@@ -163,10 +162,10 @@ export type Database = {
           subtotal: number;
           total_amount: number;
           updated_at: string | null;
+          user_id: string;
           vat_amount: number;
         };
         Insert: {
-          admin_id: string;
           archived_at?: string | null;
           cart_id: string;
           created_at?: string | null;
@@ -175,10 +174,10 @@ export type Database = {
           subtotal: number;
           total_amount: number;
           updated_at?: string | null;
+          user_id: string;
           vat_amount: number;
         };
         Update: {
-          admin_id?: string;
           archived_at?: string | null;
           cart_id?: string;
           created_at?: string | null;
@@ -187,21 +186,22 @@ export type Database = {
           subtotal?: number;
           total_amount?: number;
           updated_at?: string | null;
+          user_id?: string;
           vat_amount?: number;
         };
         Relationships: [
-          {
-            foreignKeyName: 'orders_admin_id_fkey';
-            columns: ['admin_id'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          },
           {
             foreignKeyName: 'orders_cart_id_fkey';
             columns: ['cart_id'];
             isOneToOne: true;
             referencedRelation: 'carts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'orders_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
             referencedColumns: ['id'];
           },
         ];
@@ -212,11 +212,10 @@ export type Database = {
           category_id: string | null;
           created_at: string | null;
           id: string;
-          image_url: string | File[] | null;
+          image_url: string | null;
           name: string;
           price: number;
           sku: string;
-          parent_id: string;
           stock_quantity: number;
           updated_at: string | null;
         };
@@ -229,7 +228,6 @@ export type Database = {
           name: string;
           price: number;
           sku?: string;
-          parent_id?: string;
           stock_quantity?: number;
           updated_at?: string | null;
         };
@@ -242,7 +240,6 @@ export type Database = {
           name?: string;
           price?: number;
           sku?: string;
-          parent_id?: string;
           stock_quantity?: number;
           updated_at?: string | null;
         };
@@ -260,7 +257,7 @@ export type Database = {
         Row: {
           address: string | null;
           archived_at: string | null;
-          avatar_url: string | File[] | null;
+          avatar_url: string | null;
           created_at: string | null;
           email: string | null;
           first_name: string | null;
@@ -294,6 +291,33 @@ export type Database = {
           last_name?: string | null;
           middle_name?: string | null;
           role?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      vat_rates: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          is_active: boolean;
+          name: string;
+          rate: number;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          rate: number;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          rate?: number;
           updated_at?: string | null;
         };
         Relationships: [];

@@ -200,7 +200,7 @@ USING (EXISTS (SELECT 1 FROM carts WHERE id = cart_items.cart_id AND user_id = a
 CREATE TABLE orders (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     cart_id UUID REFERENCES carts(id) UNIQUE NOT NULL,
-    admin_id UUID REFERENCES profiles(id) NOT NULL,
+    user_id UUID REFERENCES profiles(id) NOT NULL,
     subtotal NUMERIC(10, 2) NOT NULL,
     vat_amount NUMERIC(10, 2) NOT NULL,
     discount_amount NUMERIC(10, 2) DEFAULT 0,
@@ -220,6 +220,9 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Admins manage orders" 
 ON orders FOR ALL TO authenticated USING (is_admin());
+
+CREATE POLICY "Users can insert orders" 
+ON orders FOR INSERT TO authenticated WITH CHECK (true);
 
 CREATE POLICY "Users can insert users" 
 ON profiles FOR INSERT TO authenticated WITH CHECK (true);

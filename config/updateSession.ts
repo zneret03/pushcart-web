@@ -62,6 +62,7 @@ export async function updateSession(request: NextRequest) {
     'profiles',
     'pos',
     'categories',
+    'vat',
   ];
 
   const userRestrictedRoutes = ['/admin'];

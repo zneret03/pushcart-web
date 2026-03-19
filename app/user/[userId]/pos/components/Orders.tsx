@@ -1,26 +1,37 @@
 'use client';
 
-import { JSX, ReactNode, useState } from 'react';
+import { JSX, ReactNode, useState, useTransition } from 'react';
 import { CartItemsProducts, Carts, OrderSteps } from '@/lib/types/Carts';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { OrdersCard } from './OrdersCards';
 import { ShoppingCart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { OrdersTable } from './OrdersTable';
 import { TabsContainer } from '@/components/custom/Tabs';
 import { EmptyContainer } from '@/components/custom/EmptyContainer';
 import { MenuOptions } from '@/lib/types/MenuOptions';
 import { calculateCartTotal } from '../helpers/calculateCartTotal';
 import { formatCurrency } from '@/helpers/formatAmountPh';
+import { CustomButton } from '@/components/custom/CustomButton';
+import { addOrders } from '@/services/orders/orders.services';
+import { OrdersInsert } from '@/lib/types/Orders';
+import { useRouter } from 'next/navigation';
 
 interface OrdersForm {
   cartItems: CartItemsProducts[];
   carts: Carts[];
+  cartId: string;
+  userId: string;
 }
 
-export function Orders({ cartItems, carts }: OrdersForm): JSX.Element {
+export function Orders({
+  cartItems,
+  carts,
+  cartId,
+  userId,
+}: OrdersForm): JSX.Element {
   const [currentStep, setCurrentStep] = useState<OrderSteps>('calculations');
+  const [isPending, startTransition] = useTransition();
 
   const tabsOptions: MenuOptions[] = [
     {
@@ -37,6 +48,26 @@ export function Orders({ cartItems, carts }: OrdersForm): JSX.Element {
   const discount = 0;
   const subTotal = calculateCartTotal(cartItems) - discount;
   const totalPayment = subTotal + vatTax;
+
+  const router = useRouter();
+
+  const onCompleteOrder = (): void => {
+    startTransition(async () => {
+      const data = {
+        subtotal: subTotal,
+        vat_amount: vatTax,
+        discount_amount: discount,
+        total_amount: totalPayment,
+        cart_id: cartId,
+        user_id: userId,
+      } as OrdersInsert;
+
+      await addOrders(data);
+      router.refresh();
+    });
+  };
+
+  const isDisabledButton = cartItems.length > 0;
 
   const tabContent: { [key: string]: ReactNode } = {
     calculations: (
@@ -98,10 +129,15 @@ export function Orders({ cartItems, carts }: OrdersForm): JSX.Element {
 
   return (
     <div>
-      <Button className="float-right">
+      <CustomButton
+        isLoading={isPending}
+        disabled={isPending || !isDisabledButton}
+        className="float-right"
+        onClick={onCompleteOrder}
+      >
         <ShoppingCart />
         Complete Order
-      </Button>
+      </CustomButton>
       <section className="flex w-full gap-2">
         <div className="flex-4">
           <OrdersTable cartItems={cartItems as CartItemsProducts[]} />
