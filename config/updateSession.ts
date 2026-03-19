@@ -63,6 +63,7 @@ export async function updateSession(request: NextRequest) {
     'pos',
     'categories',
     'vat',
+    'orders',
   ];
 
   const userRestrictedRoutes = ['/admin'];

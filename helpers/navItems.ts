@@ -1,5 +1,12 @@
 import { SideMenu } from '@/lib/types/menus';
-import { LayoutDashboard, Clipboard, Users, Files, Coins } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Clipboard,
+  Users,
+  Files,
+  Coins,
+  Ham,
+} from 'lucide-react';
 
 const parentPathName = 'admin';
 
@@ -8,6 +15,12 @@ export const adminMenus = (id: string): SideMenu[] => [
     title: 'Dashboard',
     url: `/${parentPathName}/${id}/dashboard`,
     icon: LayoutDashboard,
+    isActive: true,
+  },
+  {
+    url: `/${parentPathName}/${id}/orders`,
+    title: 'Orders',
+    icon: Ham,
     isActive: true,
   },
   {
