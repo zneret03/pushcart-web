@@ -2,6 +2,8 @@ import { JSX } from 'react';
 import { Container } from '@/components/custom/Container';
 import { VatTable } from './components/VatTable';
 import { VatDialog } from './components/dialogs/VatDialog';
+import { DeleteVatDialog } from './components/dialogs/DeleteVatDialog';
+import { EditVatDialog } from './components/dialogs/EditVatDialog';
 import { getVat } from '@/services/vat/vat.services';
 
 export default async function Vat({
@@ -30,6 +32,8 @@ export default async function Vat({
       />
 
       <VatDialog />
+      <DeleteVatDialog />
+      <EditVatDialog />
     </Container>
   );
 }

@@ -39,15 +39,32 @@ export const addVat = async (
   }
 };
 
-export const editVat = async (data: { [key: string]: string }) => {
+export const editVat = async (data: { [key: string]: string | boolean }) => {
   try {
     const response = await axiosService.put(`/api/protected/vat/${data.id}`, {
-      name: data.name,
+      ...data,
       type: 'edit-vat',
     });
 
     toast('Successfully', {
       description: response.data.message,
+    });
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
+
+export const deleteVat = async (id: string): Promise<void> => {
+  try {
+    await axiosService.delete(`/api/protected/vat/${id}`);
+
+    toast('Successfully', {
+      description: 'Successfully Delete vat.',
     });
   } catch (e) {
     if (axios.isAxiosError(e)) {

@@ -303,6 +303,7 @@ export type Database = {
           name: string;
           rate: number;
           updated_at: string | null;
+          archived_at: string | null;
         };
         Insert: {
           created_at?: string | null;
@@ -311,6 +312,7 @@ export type Database = {
           name: string;
           rate: number;
           updated_at?: string | null;
+          archived_at?: string | null;
         };
         Update: {
           created_at?: string | null;
@@ -319,6 +321,7 @@ export type Database = {
           name?: string;
           rate?: number;
           updated_at?: string | null;
+          archived_at?: string | null;
         };
         Relationships: [];
       };
