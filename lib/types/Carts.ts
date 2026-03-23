@@ -6,7 +6,7 @@ export type CartItems = Database['public']['Tables']['cart_items']['Row'];
 
 export interface CartItemsProducts extends CartItems {
   products: Products;
-  carts: Carts[];
+  carts: Carts;
 }
 
 export type OrderSteps = 'calculations' | 'orders';

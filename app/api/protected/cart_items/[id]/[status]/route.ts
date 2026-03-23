@@ -10,18 +10,18 @@ import { NextRequest } from 'next/server';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; status: string }> },
 ) {
   try {
     const supabase = await createClient();
-    const { id } = await params;
+    const { id, status } = await params;
 
     const { data, error } = await supabase
       .from('cart_items')
       .select(
         'id, carts:cart_id!inner(status), products(name, sku, price, stock_quantity, image_url, created_at), quantity, created_at',
       )
-      .eq('carts.status', 'unpaid')
+      .eq('carts.status', status)
       .eq('cart_id', id);
 
     if (error) {

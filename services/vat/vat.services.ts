@@ -3,6 +3,18 @@ import { axiosService } from '@/app/api/axios-client';
 import { VatInsert } from '@/lib/types/vat';
 import { toast } from 'sonner';
 
+export const getSpecificVat = async () => {
+  try {
+    const response = await axiosService.get(`/api/protected/vat/all`);
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e.response?.data.error;
+    }
+  }
+};
+
 export const getVat = async (params: string) => {
   try {
     const response = await axiosService.get(`/api/protected/vat${params}`);

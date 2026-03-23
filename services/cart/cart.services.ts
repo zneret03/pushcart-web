@@ -18,10 +18,13 @@ export const getCarts = async (): Promise<Carts[] | undefined> => {
   }
 };
 
-export const getCartItemsById = async (cartId: string): Promise<void> => {
+export const getCartItemsById = async (
+  cartId: string,
+  status: string,
+): Promise<void> => {
   try {
     const response = await axiosService.get(
-      `/api/protected/cart_items/${cartId}`,
+      `/api/protected/cart_items/${cartId}/${status}`,
     );
 
     return response.data.data;

@@ -3,6 +3,7 @@ import { getCartItemsById } from '@/services/cart/cart.services';
 import { getCarts } from '@/services/cart/cart.services';
 import { Orders } from './components/Orders';
 import { CartItemsProducts, Carts } from '@/lib/types/Carts';
+import { getSpecificVat } from '@/services/vat/vat.services';
 
 export default async function PostPage({
   searchParams,
@@ -13,11 +14,15 @@ export default async function PostPage({
 }): Promise<JSX.Element> {
   const { cartId } = await searchParams;
   const { userId } = await params;
+
   const carts = await getCarts();
-  const cartItems = !cartId ? [] : await getCartItemsById(cartId);
+  const cartItems = !cartId ? [] : await getCartItemsById(cartId, 'unpaid');
+  const getAllVat = await getSpecificVat();
+
+  console.info(getAllVat);
 
   return (
-    <div className="container mx-auto h-auto space-y-4 py-12">
+    <div className="container mx-auto h-auto space-y-4 p-12">
       <header>
         <h1 className="text-4xl font-bold">Orders</h1>
         <span className="text-gray-500">all users orders can see here</span>

@@ -3,6 +3,18 @@ import { axiosService } from '@/app/api/axios-client';
 import { toast } from 'sonner';
 import { OrdersInsert } from '@/lib/types/Orders';
 
+export const getOrders = async (params: string) => {
+  try {
+    const response = await axiosService.get(`/api/protected/orders${params}`);
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      throw e.response?.data.error;
+    }
+  }
+};
+
 export const addOrders = async (
   data: OrdersInsert,
 ): Promise<OrdersInsert | undefined> => {
