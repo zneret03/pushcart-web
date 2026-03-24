@@ -1,11 +1,11 @@
 'use client';
 
 import { JSX, ReactNode, useState, useTransition } from 'react';
+import { ShoppingCart, Coins, X } from 'lucide-react';
 import { CartItemsProducts, Carts, OrderSteps } from '@/lib/types/Carts';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { OrdersCard } from './OrdersCards';
-import { ShoppingCart } from 'lucide-react';
 import { OrdersTable } from './OrdersTable';
 import { TabsContainer } from '@/components/custom/Tabs';
 import { EmptyContainer } from '@/components/custom/EmptyContainer';
@@ -14,14 +14,18 @@ import { calculateCartTotal } from '../helpers/calculateCartTotal';
 import { formatCurrency } from '@/helpers/formatAmountPh';
 import { CustomButton } from '@/components/custom/CustomButton';
 import { addOrders } from '@/services/orders/orders.services';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { OrdersInsert } from '@/lib/types/Orders';
 import { useRouter } from 'next/navigation';
+import { Vat } from '@/lib/types/vat';
 
 interface OrdersForm {
   cartItems: CartItemsProducts[];
   carts: Carts[];
   cartId: string;
   userId: string;
+  tax: Pick<Vat, 'id' | 'rate'>;
 }
 
 export function Orders({
@@ -29,9 +33,12 @@ export function Orders({
   carts,
   cartId,
   userId,
+  tax,
 }: OrdersForm): JSX.Element {
   const [currentStep, setCurrentStep] = useState<OrderSteps>('calculations');
   const [isPending, startTransition] = useTransition();
+  const [hasDiscount, setHasDiscount] = useState<boolean>(false);
+  const [discount, setDiscount] = useState<number>(0);
 
   const tabsOptions: MenuOptions[] = [
     {
@@ -44,12 +51,15 @@ export function Orders({
     },
   ];
 
-  const vatTax = 0.12;
-  const discount = 0;
+  const vatTax = tax?.rate;
   const subTotal = calculateCartTotal(cartItems) - discount;
   const totalPayment = subTotal + vatTax;
 
   const router = useRouter();
+
+  const toggleDiscount = (): void => {
+    setHasDiscount((prevState) => !prevState);
+  };
 
   const onCompleteOrder = (): void => {
     startTransition(async () => {
@@ -64,6 +74,8 @@ export function Orders({
 
       await addOrders(data);
       router.refresh();
+      setDiscount(0);
+      setHasDiscount(false);
     });
   };
 
@@ -96,6 +108,24 @@ export function Orders({
               {formatCurrency(discount)}
             </span>
           </div>
+
+          {hasDiscount && (
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                placeholder="0"
+                title="Discount"
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  setDiscount(Number(target.value));
+                }}
+              />
+              <X
+                className="mt-6 cursor-pointer text-gray-400"
+                onClick={toggleDiscount}
+              />
+            </div>
+          )}
         </CardContent>
 
         <Separator className="my-2" />
@@ -128,16 +158,21 @@ export function Orders({
   };
 
   return (
-    <div>
-      <CustomButton
-        isLoading={isPending}
-        disabled={isPending || !isDisabledButton}
-        className="float-right"
-        onClick={onCompleteOrder}
-      >
-        <ShoppingCart />
-        Complete Order
-      </CustomButton>
+    <div className="space-y-4">
+      <section className="flex items-center justify-end gap-2">
+        <Button onClick={toggleDiscount}>
+          <Coins />
+          Add Discount
+        </Button>
+        <CustomButton
+          isLoading={isPending}
+          disabled={isPending || !isDisabledButton}
+          onClick={onCompleteOrder}
+        >
+          <ShoppingCart />
+          Complete Order
+        </CustomButton>
+      </section>
       <section className="flex w-full gap-2">
         <div className="flex-4">
           <OrdersTable cartItems={cartItems as CartItemsProducts[]} />

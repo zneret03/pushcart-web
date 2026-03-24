@@ -19,8 +19,6 @@ export default async function PostPage({
   const cartItems = !cartId ? [] : await getCartItemsById(cartId, 'unpaid');
   const getAllVat = await getSpecificVat();
 
-  console.info(getAllVat);
-
   return (
     <div className="container mx-auto h-auto space-y-4 p-12">
       <header>
@@ -33,6 +31,7 @@ export default async function PostPage({
         cartItems={cartItems as CartItemsProducts[]}
         cartId={cartId}
         userId={userId}
+        tax={getAllVat.vat}
       />
     </div>
   );

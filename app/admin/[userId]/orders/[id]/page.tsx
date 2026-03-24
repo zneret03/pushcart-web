@@ -24,7 +24,7 @@ export default async function OrdersPage({
       <div className="grid grid-cols-4 gap-2">
         {(cartItems as CartItemsProducts[]).map((item, index) => (
           <Card
-            className="relative w-full max-w-sm pt-0"
+            className="relative w-full pt-0"
             key={`${item.products.name}-${index}`}
           >
             <Image
@@ -32,7 +32,7 @@ export default async function OrdersPage({
               alt="Event cover"
               width={500}
               height={500}
-              className="relative z-20 aspect-video w-full object-cover brightness-80 grayscale dark:brightness-40"
+              className="relative z-20 aspect-video w-full rounded-t-md object-cover brightness-80 grayscale dark:brightness-40"
             />
             <CardHeader>
               <CardAction>

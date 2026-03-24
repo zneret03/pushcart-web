@@ -1,4 +1,3 @@
-import { NextRequest } from 'next/server';
 import { createClient } from '@/config';
 import {
   badRequestResponse,
@@ -6,12 +5,12 @@ import {
   successResponse,
 } from '../../../helpers/response';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from('vat')
+      .from('vat_rates')
       .select('id, rate')
       .maybeSingle();
 
