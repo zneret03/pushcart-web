@@ -6,10 +6,10 @@ export default function AdminPage() {
     <Container title="Dashboard" description="You can see all satistics here">
       <AnalyticsCards
         {...{
-          users: 0,
-          leaves: 0,
-          awards: 0,
-          certificates: 0,
+          users: { name: 'Total Users', count: 0 },
+          orders: { name: 'Total Orders', count: 0 },
+          products: { name: 'Total Products', count: 0 },
+          monthlySales: { name: 'Total Monthly Sales', count: 0 },
         }}
       />
     </Container>

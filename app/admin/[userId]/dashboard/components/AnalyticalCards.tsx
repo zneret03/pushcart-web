@@ -1,4 +1,4 @@
-import { Users, FileText, Medal, ShieldCheck } from 'lucide-react';
+import { Users, ShoppingCart, FileText, DollarSign } from 'lucide-react';
 import {
   Card,
   CardAction,
@@ -15,25 +15,25 @@ interface Options {
 
 interface SectionCards {
   users: Options;
-  leaves: Options;
-  awards: Options;
-  certificates: Options;
+  orders: Options;
+  products: Options;
+  monthlySales: Options;
 }
 
 const cardIcons: { [key: string]: ReactNode } = {
   'Total Users': <Users />,
-  'Total Leaves': <FileText />,
-  'Unread awards': <Medal />,
-  'Certificate Requests': <ShieldCheck />,
+  'Total Orders': <ShoppingCart />,
+  Products: <FileText />,
+  'Total Monthly Sales': <DollarSign />,
 };
 
 export function AnalyticsCards({
   users,
-  leaves,
-  awards,
-  certificates,
+  orders,
+  products,
+  monthlySales,
 }: SectionCards): JSX.Element {
-  const summationData = [users, leaves, awards, certificates];
+  const summationData = [users, orders, products, monthlySales];
 
   return (
     <div className="grid grid-cols-4 gap-2">
