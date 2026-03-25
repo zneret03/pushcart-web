@@ -7,6 +7,7 @@ DECLARE
   v_monthly_sales NUMERIC(10, 2);
   v_low_stock jsonb;
   v_yearly_sales jsonb;
+  v_available_years jsonb;
   v_result jsonb;
   v_target_year INT;
 BEGIN
@@ -38,21 +39,21 @@ BEGIN
 
   -- 7. Get low stock products (< 5)
   SELECT COALESCE(
-    json_agg(
-      json_build_object(
+    jsonb_agg(
+      jsonb_build_object(
         'id', id,
         'name', name,
         'sku', sku,
-        'stock_quantity', stock_quantity
+        'stock_quantity', stock_quantity,
+        'image_url', image_url
       )
     ), 
     '[]'::jsonb
   ) INTO v_low_stock
   FROM public.products
-  WHERE stock_quantity < 5;
+  WHERE stock_quantity < 5 LIMIT 5;
 
   -- 8. Get yearly sales breakdown (Jan - Dec) for the target year
-  -- Using generate_series(1,12) guarantees we get all 12 months even if sales are 0
   WITH months AS (
     SELECT generate_series(1, 12) AS month_num
   ),
@@ -64,16 +65,31 @@ BEGIN
     WHERE EXTRACT(YEAR FROM created_at)::INT = v_target_year
     GROUP BY EXTRACT(MONTH FROM created_at)::INT
   )
-  SELECT json_agg(
-    json_build_object(
-      'month', to_char(to_date(m.month_num::text, 'MM'), 'Mon'), -- Converts '1' to 'Jan', etc.
-      'sales', COALESCE(mt.total_sales, 0)
-    ) ORDER BY m.month_num
+  SELECT COALESCE(
+    jsonb_agg(
+      jsonb_build_object(
+        'month', to_char(to_date(m.month_num::text, 'MM'), 'Mon'),
+        'sales', COALESCE(mt.total_sales, 0)
+      ) ORDER BY m.month_num
+    ),
+    '[]'::jsonb
   ) INTO v_yearly_sales
   FROM months m
   LEFT JOIN monthly_totals mt ON m.month_num = mt.month_num;
 
-  -- 9. Build and return the final JSON response
+  -- 9. Get all distinct years that have orders (for the frontend dropdown)
+  -- We use a subquery to ensure they are sorted newest to oldest
+  SELECT COALESCE(
+    jsonb_agg(year_val),
+    '[]'::jsonb
+  ) INTO v_available_years
+  FROM (
+    SELECT DISTINCT EXTRACT(YEAR FROM created_at)::INT AS year_val
+    FROM public.orders
+    ORDER BY year_val DESC
+  ) sub;
+
+  -- 10. Build and return the final JSON response
   v_result := jsonb_build_object(
     'totalUsers', v_total_users,
     'totalOrders', v_total_orders,
@@ -81,7 +97,8 @@ BEGIN
     'totalMonthlySales', v_monthly_sales,
     'lowStockProducts', v_low_stock,
     'yearlySales', v_yearly_sales,
-    'filteredYear', v_target_year
+    'filteredYear', v_target_year,
+    'availableYears', v_available_years
   );
 
   RETURN v_result;

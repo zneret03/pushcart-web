@@ -10,10 +10,10 @@ import {
 
 const parentPathName = 'admin';
 
-export const adminMenus = (id: string): SideMenu[] => [
+export const adminMenus = (id: string, year: number): SideMenu[] => [
   {
     title: 'Dashboard',
-    url: `/${parentPathName}/${id}/dashboard`,
+    url: `/${parentPathName}/${id}/dashboard?year=${year}`,
     icon: LayoutDashboard,
     isActive: true,
   },

@@ -23,10 +23,9 @@ interface ChartType {
   currentYear: string;
   data: {
     month: string;
-    days_present: number;
-    days_absent: number;
-    tardiness_count: number;
+    sales: string;
   }[];
+  title: string;
 }
 
 const chartConfig = {
@@ -41,7 +40,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function Chart({ data, year, currentYear }: ChartType) {
+export function Chart({ data, year, currentYear, title }: ChartType) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -52,7 +51,7 @@ export function Chart({ data, year, currentYear }: ChartType) {
   return (
     <Card>
       <CardHeader className="flex items-center justify-between">
-        <CardTitle className="text-2xl">Attendance Statistics</CardTitle>
+        <CardTitle className="text-2xl">{title}</CardTitle>
 
         <Select
           value={currentYear as string}
@@ -82,25 +81,15 @@ export function Chart({ data, year, currentYear }: ChartType) {
               tickFormatter={(value) => value.slice(0, 3)}
             />
             <ChartTooltip
-              content={(props: CustomTooltipProps) => (
-                <ChartTooltipContent {...props} hideIndicator hideLabel />
+              content={(props) => (
+                <ChartTooltipContent
+                  {...(props as CustomTooltipProps)}
+                  hideIndicator
+                  hideLabel
+                />
               )}
             />
-            <Bar
-              dataKey="days_present"
-              fill="var(--color-days_present)"
-              radius={4}
-            />
-            <Bar
-              dataKey="days_absent"
-              fill="var(--color-days_absent)"
-              radius={4}
-            />
-            <Bar
-              dataKey="tardiness_count"
-              fill="var(--color-tardiness_count)"
-              radius={4}
-            />
+            <Bar dataKey="sales" fill="var(--color-days_present)" radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>

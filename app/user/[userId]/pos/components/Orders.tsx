@@ -51,7 +51,7 @@ export function Orders({
     },
   ];
 
-  const vatTax = tax?.rate;
+  const vatTax = tax?.rate || 0;
   const subTotal = calculateCartTotal(cartItems) - discount;
   const totalPayment = subTotal + vatTax;
 

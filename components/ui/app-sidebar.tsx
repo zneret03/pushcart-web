@@ -19,6 +19,7 @@ export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>): React.JSX.Element {
   const { email, id } = useAuth();
+  const today = new Date();
 
   // This is sample data.
   const data = {
@@ -27,7 +28,7 @@ export function AppSidebar({
       avatar: '',
     },
     teams: appName(email as string),
-    navMain: adminMenus(id),
+    navMain: adminMenus(id, today.getFullYear()),
   };
 
   return (
