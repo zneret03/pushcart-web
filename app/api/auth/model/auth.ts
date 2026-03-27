@@ -6,6 +6,27 @@ import {
 } from '../../helpers/response';
 import { SignIn, UserForm } from '@/lib/types/users';
 
+export const signInCustomer = async () => {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.auth.signInAnonymously();
+
+    if (error) {
+      return generalErrorResponse({ error: error.message });
+    }
+
+    return successResponse({
+      message: 'Successfully added product',
+      id: data,
+    });
+  } catch (error) {
+    const newError = error as Error;
+    console.error(newError);
+    return generalErrorResponse({ error: newError.message });
+  }
+};
+
 export const signIn = async (body: SignIn) => {
   try {
     const supabase = await createClient();

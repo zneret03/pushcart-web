@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { validationErrorNextResponse } from '../helpers/response';
 import { isEmpty } from 'lodash';
-import { signIn, signOut } from './model/auth';
+import { signIn, signOut, signInCustomer } from './model/auth';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -16,5 +16,9 @@ export async function POST(req: NextRequest) {
 
   if (body.type === 'sign-in') {
     return signIn(body);
+  }
+
+  if (body.type === 'customer-sign-in') {
+    return signInCustomer();
   }
 }
