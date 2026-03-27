@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Push Cart System',
   description: 'Push Cart Inventory System',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Customer Application',
+  },
 };
 
 export default function RootLayout({

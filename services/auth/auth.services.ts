@@ -3,6 +3,23 @@ import { AxiosResponse } from 'axios';
 import { toast } from 'sonner';
 import { UserForm } from '@/lib/types/users';
 
+export const anonymouslyLogin = async (): Promise<UserForm | undefined> => {
+  try {
+    const response = await axios.post('/api/auth', {
+      type: 'customer-sign-in',
+    });
+
+    return response.data.data.user;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
+
 export const signIn = async (
   email: string,
   password: string,

@@ -18,7 +18,7 @@ export const signInCustomer = async () => {
 
     return successResponse({
       message: 'Successfully added product',
-      id: data,
+      data,
     });
   } catch (error) {
     const newError = error as Error;
