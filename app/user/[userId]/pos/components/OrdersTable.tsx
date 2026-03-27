@@ -80,7 +80,10 @@ export function OrdersTable({ cartItems: data }: OrdersType) {
           return (
             <div className="flex items-center gap-2">
               <Image
-                src={row.original?.products?.image_url as string}
+                src={
+                  (row.original?.products?.image_url as string) ||
+                  '/images/empty-food.jpg'
+                }
                 width={500}
                 height={500}
                 className="h-10 w-10 rounded-md object-cover"

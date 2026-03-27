@@ -89,7 +89,7 @@ export function UsersDialog(): JSX.Element {
       open={isOpenDialog}
       onOpenChange={() => toggleOpen?.(false, null, null)}
     >
-      <DialogContent className="sm:max-w-[40rem]">
+      <DialogContent className="max-h-[40rem] overflow-auto sm:max-w-[40rem]">
         <DialogHeader>
           <DialogTitle>Add User</DialogTitle>
         </DialogHeader>
