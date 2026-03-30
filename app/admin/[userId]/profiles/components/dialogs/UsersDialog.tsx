@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useTransition } from 'react';
+import { JSX, useState, useTransition } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Eye, EyeClosed } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { CustomButton } from '@/components/custom/CustomButton';
@@ -32,6 +39,9 @@ import { roleTypes } from '../../helpers/constants';
 import { UserInsertType } from '@/lib/types/users';
 
 export function UsersDialog(): JSX.Element {
+  const [toggleEye, setToggleEye] = useState<boolean>(false);
+  const [toggleConfirmPassword, setToggleConfirmPassword] =
+    useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
   const {
     handleSubmit,
@@ -54,6 +64,14 @@ export function UsersDialog(): JSX.Element {
   const resetVariables = (): void => {
     toggleOpen?.(false, null, null);
     router.refresh();
+  };
+
+  const toggleEyePassword = (): void => {
+    setToggleEye((prevState) => !prevState);
+  };
+
+  const toggleConfirmEyePassword = (): void => {
+    setToggleConfirmPassword((prevState) => !prevState);
   };
 
   const onSubmit = async (data: UserInsertType): Promise<void> => {
@@ -109,27 +127,59 @@ export function UsersDialog(): JSX.Element {
         />
 
         <div className="grid grid-cols-2 gap-2">
-          <Input
-            type="password"
-            title="Password"
-            placeholder="Password"
-            hasError={!!errors.password}
-            errorMessage={errors.password?.message}
-            {...register('password', {
-              required: 'required field',
-            })}
-          />
+          <Field className="max-w-sm">
+            <FieldLabel htmlFor="inline-end-input">Password*</FieldLabel>
+            <InputGroup>
+              <InputGroupInput
+                id="inline-end-input"
+                type={toggleEye ? 'text' : 'password'}
+                placeholder="Enter password"
+                {...register('password', {
+                  required: 'required field',
+                })}
+              />
+              <InputGroupAddon align="inline-end" onClick={toggleEyePassword}>
+                {toggleEye ? (
+                  <Eye className="cursor-pointer" />
+                ) : (
+                  <EyeClosed className="cursor-pointer" />
+                )}
+              </InputGroupAddon>
+            </InputGroup>
+            {!!errors.password && (
+              <FieldDescription>{errors.password?.message}</FieldDescription>
+            )}
+          </Field>
 
-          <Input
-            type="password"
-            title="Confirm Password"
-            placeholder="Confirm Password"
-            hasError={!!errors.confirmPassword}
-            errorMessage={errors.confirmPassword?.message}
-            {...register('confirmPassword', {
-              required: 'required field',
-            })}
-          />
+          <Field className="max-w-sm">
+            <FieldLabel htmlFor="inline-end-input">
+              Confirm Password*
+            </FieldLabel>
+            <InputGroup>
+              <InputGroupInput
+                type={toggleConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm Password"
+                {...register('confirmPassword', {
+                  required: 'required field',
+                })}
+              />
+              <InputGroupAddon
+                align="inline-end"
+                onClick={toggleConfirmEyePassword}
+              >
+                {toggleConfirmPassword ? (
+                  <Eye className="cursor-pointer" />
+                ) : (
+                  <EyeClosed className="cursor-pointer" />
+                )}
+              </InputGroupAddon>
+            </InputGroup>
+            {!!errors.confirmPassword && (
+              <FieldDescription>
+                {errors.confirmPassword?.message}
+              </FieldDescription>
+            )}
+          </Field>
         </div>
 
         <div className="grid grid-cols-3 gap-2">

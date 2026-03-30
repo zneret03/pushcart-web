@@ -1,13 +1,19 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { cn } from '@/lib/utils';
 import { CustomButton } from '@/components/custom/CustomButton';
 import { useForm, FormProvider } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { SignIn, UserForm } from '@/lib/types/users';
-import { Ban } from 'lucide-react';
+import { Ban, Eye, EyeClosed } from 'lucide-react';
 import { useAuth } from '@/services/auth/states/auth-state';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useShallow } from 'zustand/shallow';
@@ -17,6 +23,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
+  const [toggleEye, setToggleEye] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   const [isPending, startTransition] = useTransition();
   const form = useForm<SignIn>();
@@ -30,6 +37,10 @@ export function LoginForm({
   );
 
   const router = useRouter();
+
+  const toggleEyeIcon = (): void => {
+    setToggleEye((prevState) => !prevState);
+  };
 
   const onSubmit = async ({ email, password }: SignIn): Promise<void> => {
     startTransition(async () => {
@@ -91,17 +102,30 @@ export function LoginForm({
               errorMessage={errors.email?.message as string}
             />
             <div className="grid gap-2">
-              <Input
-                title="Password"
-                id="password"
-                type="password"
-                placeholder="Password"
-                hasError={!!errors.password as boolean}
-                errorMessage={errors.password?.message as string}
-                {...register('password', {
-                  required: 'field required.',
-                })}
-              />
+              <Field className="max-w-sm">
+                <FieldLabel htmlFor="inline-end-input">Password*</FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    type={toggleEye ? 'text' : 'password'}
+                    placeholder="Password"
+                    {...register('password', {
+                      required: 'required field',
+                    })}
+                  />
+                  <InputGroupAddon align="inline-end" onClick={toggleEyeIcon}>
+                    {toggleEye ? (
+                      <Eye className="cursor-pointer" />
+                    ) : (
+                      <EyeClosed className="cursor-pointer" />
+                    )}
+                  </InputGroupAddon>
+                </InputGroup>
+                {!!errors.password && (
+                  <FieldDescription>
+                    {errors.password?.message}
+                  </FieldDescription>
+                )}
+              </Field>
             </div>
             <CustomButton
               isLoading={isPending}
