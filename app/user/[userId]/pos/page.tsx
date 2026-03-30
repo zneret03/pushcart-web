@@ -9,13 +9,13 @@ export default async function PostPage({
   searchParams,
   params,
 }: {
-  searchParams: Promise<{ cartId: string }>;
+  searchParams: Promise<{ cartId: string; search: string }>;
   params: Promise<{ userId: string }>;
 }): Promise<JSX.Element> {
-  const { cartId } = await searchParams;
+  const { cartId, search } = await searchParams;
   const { userId } = await params;
 
-  const carts = await getCarts();
+  const carts = await getCarts(search ? `?search=${search}` : '');
   const cartItems = !cartId ? [] : await getCartItemsById(cartId, 'unpaid');
   const getAllVat = await getSpecificVat();
 

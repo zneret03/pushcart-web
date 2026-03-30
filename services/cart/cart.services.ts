@@ -3,9 +3,11 @@ import { axiosService } from '@/app/api/axios-client';
 import { toast } from 'sonner';
 import { Carts } from '@/lib/types/Carts';
 
-export const getCarts = async (): Promise<Carts[] | undefined> => {
+export const getCarts = async (
+  params: string,
+): Promise<Carts[] | undefined> => {
   try {
-    const response = await axiosService.get('/api/protected/cart');
+    const response = await axiosService.get(`/api/protected/cart${params}`);
 
     return response.data.data as Carts[];
   } catch (e) {

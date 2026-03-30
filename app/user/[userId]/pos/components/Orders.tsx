@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, ReactNode, useState, useTransition } from 'react';
+import { JSX, ReactNode, useState, useTransition, useMemo } from 'react';
 import { ShoppingCart, Coins, X } from 'lucide-react';
 import { CartItemsProducts, Carts, OrderSteps } from '@/lib/types/Carts';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -18,6 +18,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { OrdersInsert } from '@/lib/types/Orders';
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { debounce } from 'lodash';
 import { Vat } from '@/lib/types/vat';
 
 interface OrdersForm {
@@ -40,6 +42,9 @@ export function Orders({
   const [hasDiscount, setHasDiscount] = useState<boolean>(false);
   const [discount, setDiscount] = useState<number>(0);
 
+  const pathname = usePathname();
+  const router = useRouter();
+
   const tabsOptions: MenuOptions[] = [
     {
       value: 'calculations',
@@ -55,10 +60,26 @@ export function Orders({
   const subTotal = calculateCartTotal(cartItems) - discount;
   const totalPayment = subTotal + vatTax;
 
-  const router = useRouter();
-
   const toggleDiscount = (): void => {
     setHasDiscount((prevState) => !prevState);
+  };
+
+  const onDebounce = useMemo(
+    () =>
+      debounce((value) => {
+        if (value) {
+          router.replace(`${pathname}?search=${value}`);
+          return;
+        }
+
+        router.replace(pathname);
+      }, 500),
+    [pathname, router],
+  );
+
+  const onSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target;
+    onDebounce(value);
   };
 
   const onCompleteOrder = (): void => {
@@ -141,7 +162,14 @@ export function Orders({
       </Card>
     ),
     orders: (
-      <div className="flex-2">
+      <div className="space-2-4 flex-2">
+        {carts.length >= 0 && (
+          <Input
+            placeholder="Search user by id..."
+            onChange={(event) => onSearch(event)}
+            className="max-w-sm"
+          />
+        )}
         <OrdersCard carts={carts as Carts[]} />
         {carts.length <= 0 && <EmptyContainer />}
       </div>

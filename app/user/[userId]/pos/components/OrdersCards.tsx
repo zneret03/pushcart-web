@@ -38,7 +38,7 @@ export function OrdersCard({ carts }: OrdersCards): JSX.Element {
             </Avatar>
 
             <div>
-              <h1 className="font-medium">{item.code_token}</h1>
+              <h1 className="font-medium">{item.code_token.toUpperCase()}</h1>
               <h1>
                 {format(
                   item.created_at as string,
