@@ -43,7 +43,7 @@ export default function CustomerLayout({
           width={800}
           height={800}
           quality={90}
-          src="/images/grocery.jpg"
+          src="/images/shopping-store.jpg"
           alt="Image"
           unoptimized
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"

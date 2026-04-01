@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { AuthProvider } from '@/context/AuthProvider';
+import { CustomerNavigation } from '@/components/custom/CustomerNavigation';
 
 export default async function LayoutUser({
   children,
@@ -8,7 +8,8 @@ export default async function LayoutUser({
 }) {
   return (
     <div>
-      <AuthProvider>{children}</AuthProvider>
+      <CustomerNavigation />
+      {children}
     </div>
   );
 }

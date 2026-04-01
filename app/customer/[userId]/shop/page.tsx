@@ -1,9 +1,10 @@
 import { JSX } from 'react';
+import { Container } from '@/components/custom/Container';
 
 export default async function Shop(): Promise<JSX.Element> {
   return (
-    <div className="container mx-auto">
-      <div>Shops</div>
-    </div>
+    <Container title="Shops" description="Customers can shops here">
+      Shops
+    </Container>
   );
 }
