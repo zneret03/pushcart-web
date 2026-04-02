@@ -177,6 +177,16 @@ CREATE TABLE cart_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE POLICY "Users can select" 
+ON cart_items FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Users can insert cart_items" 
+ON cart_items FOR INSERT TO authenticated WITH CHECK (true);
+
+CREATE POLICY "Users can update cart_items" 
+ON cart_items FOR UPDATE TO authenticated WITH CHECK (true);
+
+
 -- Trigger to update timestamp on cart_items
 CREATE TRIGGER update_cart_items_updated_at
 BEFORE UPDATE ON cart_items

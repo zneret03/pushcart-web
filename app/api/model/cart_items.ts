@@ -25,3 +25,30 @@ export const editCartItems = async (
     return generalErrorResponse({ error: newError.message });
   }
 };
+
+export const addToCart = async (args: {
+  cartId: string;
+  productId: string;
+}) => {
+  try {
+    const { cartId: cart_id, productId: product_id } = args;
+    const supabase = await createClient();
+
+    const { error } = await supabase.from('cart_items').insert({
+      cart_id: cart_id,
+      product_id,
+      quantity: 1,
+    });
+
+    if (error) {
+      return generalErrorResponse({ error: error.message });
+    }
+
+    return successResponse({
+      message: 'Successfully added items to cart',
+    });
+  } catch (error) {
+    const newError = error as Error;
+    return generalErrorResponse({ error: newError.message });
+  }
+};

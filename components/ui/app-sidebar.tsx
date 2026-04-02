@@ -11,15 +11,27 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { adminMenus } from '@/helpers/navItems';
+import { Categories } from '@/lib/types/categories';
+import { getCategories } from '@/services/categories/categories.services';
+import { usePathname } from 'next/navigation';
+import { adminMenus, customerMenus } from '@/helpers/navItems';
 import { useAuth } from '@/services/auth/states/auth-state';
 import { appName } from '@/helpers/appName';
 
 export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>): React.JSX.Element {
+  const [categories, setCategories] = React.useState<Categories[] | null>(null);
+  const [isMount, setMount] = React.useState<boolean>(true);
+
   const { email, id } = useAuth();
   const today = new Date();
+
+  const pathname = usePathname();
+
+  const menus = pathname.startsWith('/customer')
+    ? customerMenus(categories, id)
+    : adminMenus(id, today.getFullYear());
 
   // This is sample data.
   const data = {
@@ -28,8 +40,23 @@ export function AppSidebar({
       avatar: '',
     },
     teams: appName(email as string),
-    navMain: adminMenus(id, today.getFullYear()),
+    navMain: menus,
   };
+
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await getCategories(
+        `?page=1&perPage=10&sortBy=created_at`,
+      );
+
+      setCategories(response.categories);
+    };
+
+    if (isMount && pathname.startsWith('/customer')) {
+      fetchCategories();
+      setMount(false);
+    }
+  }, []);
 
   return (
     <Sidebar collapsible="icon" {...props}>

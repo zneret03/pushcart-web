@@ -56,11 +56,13 @@ export function NavUser({
               <Avatar className="h-8 w-8 rounded-full">
                 <AvatarImage src={user.avatar} alt={user?.email} />
                 <AvatarFallback className="fill-primary bg-primary rounded-lg font-semibold text-white">
-                  {avatarName(user?.email)}
+                  {avatarName(user?.email || 'A')}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.email}</span>
+                <span className="truncate font-semibold">
+                  {user.email || 'anonymous@email.com'}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -74,13 +76,18 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-full">
-                  <AvatarImage src={user.avatar} alt={user.email} />
+                  <AvatarImage
+                    src={user.avatar}
+                    alt={user.email || 'anonymous@email.com'}
+                  />
                   <AvatarFallback className="fill-primary bg-primary rounded-lg font-semibold text-white">
-                    {avatarName(user?.email)}
+                    {avatarName(user?.email || 'A')}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.email}</span>
+                  <span className="truncate font-semibold">
+                    {user.email || 'anonymous@email.com'}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>

@@ -5,7 +5,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { getCategories } from '@/services/categories/categories.services';
 import { AuthProvider } from '@/context/AuthProvider';
 import { Breadcrumbs } from '@/components/custom/Breadcrumbs';
 
@@ -14,10 +13,6 @@ export default async function CustomerLayout({
 }: {
   children: ReactNode;
 }) {
-  const response = await getCategories(`?page=1&perPage=10&sortBy=created_at`);
-
-  console.log(response);
-
   return (
     <SidebarProvider>
       <AppSidebar />

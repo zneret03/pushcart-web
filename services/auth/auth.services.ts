@@ -9,7 +9,7 @@ export const anonymouslyLogin = async (): Promise<UserForm | undefined> => {
       type: 'customer-sign-in',
     });
 
-    return response.data.data.user;
+    return response.data.data;
   } catch (e) {
     if (axios.isAxiosError(e)) {
       toast.error('ERROR!', {

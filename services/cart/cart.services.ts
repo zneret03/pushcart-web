@@ -64,3 +64,29 @@ export const updateCartItemsQuantity = async (
     }
   }
 };
+
+export const addToCart = async (
+  cartId: string,
+  productId: string,
+): Promise<void> => {
+  try {
+    const response = await axiosService.post('/api/protected/cart_items', {
+      cartId,
+      productId,
+      type: 'add-to-cart',
+    });
+
+    toast('Successfully', {
+      description: response.data.message,
+    });
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
