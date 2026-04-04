@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { CartItemsProducts } from '@/lib/types/Carts';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
 import { deleteCartItems } from '@/services/cart/cart.services';
-import { X } from 'lucide-react';
+import { updateCartItemsQuantity } from '@/services/cart/cart.services';
+import { X, Plus, Minus } from 'lucide-react';
+import { debounce } from 'lodash';
+import { toast } from 'sonner';
 import { JSX } from 'react';
 
 interface CartItemsType {
@@ -22,6 +27,29 @@ export const CartItems = ({ cartItems }: CartItemsType): JSX.Element => {
     await deleteCartItems(id);
     router.refresh();
   };
+
+  const onDebounce = useMemo(
+    () =>
+      debounce((id: string, delta: number, currentCount: number) => {
+        if (currentCount <= 0) {
+          toast('Error', {
+            description: 'quantity should not be one',
+          });
+          return;
+        }
+
+        updateCartItemsQuantity(currentCount, id);
+        router.refresh();
+      }, 100),
+    [],
+  );
+
+  const adjustQuantity = useCallback(
+    (id: string, delta: number, currentCount: number) => {
+      onDebounce(id, delta, currentCount);
+    },
+    [onDebounce],
+  );
 
   return (
     <div
@@ -40,7 +68,28 @@ export const CartItems = ({ cartItems }: CartItemsType): JSX.Element => {
         <div>
           <h1 className="text-xl font-bold">{products.name}</h1>
           <p className="text-gray-500">{products.sku}</p>
-          <p className="text-gray-500">Quantity: {quantity}</p>
+          <div className="flex items-center gap-2 text-gray-500">
+            Quantity:{' '}
+            <div className="flex gap-1">
+              <Button
+                size="xs"
+                onClick={() =>
+                  adjustQuantity(cartItems.id, -1, cartItems.quantity - 1)
+                }
+              >
+                <Minus />
+              </Button>
+              <Badge variant="secondary">{quantity}</Badge>
+              <Button
+                size="xs"
+                onClick={() =>
+                  adjustQuantity(cartItems.id, 1, cartItems.quantity + 1)
+                }
+              >
+                <Plus />
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 

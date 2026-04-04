@@ -20,7 +20,7 @@ export const signInCustomer = async () => {
       .from('carts')
       .insert({
         user_id: data.user?.id,
-        status: 'unpaid',
+        status: 'active',
       })
       .select()
       .maybeSingle();
