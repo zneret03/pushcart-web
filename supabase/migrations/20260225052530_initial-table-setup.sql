@@ -186,6 +186,9 @@ ON cart_items FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "Users can update cart_items" 
 ON cart_items FOR UPDATE TO authenticated WITH CHECK (true);
 
+CREATE POLICY "Users can delete cart_items" 
+ON cart_items FOR DELETE TO authenticated WITH CHECK (true);
+
 
 -- Trigger to update timestamp on cart_items
 CREATE TRIGGER update_cart_items_updated_at

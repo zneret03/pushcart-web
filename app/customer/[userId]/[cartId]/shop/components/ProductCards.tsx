@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useMemo, useTransition } from 'react';
+import { JSX, useMemo, useTransition, useState } from 'react';
 import {
   Card,
   CardAction,
@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { addToCart } from '@/services/cart/cart.services';
 import { debounce } from 'lodash';
 import Image from 'next/image';
+import { useStackId } from 'recharts/types/cartesian/BarStack';
 
 interface ProductCardsTypes extends PaginationType {
   cartId: string;
@@ -32,6 +33,7 @@ export const ProductCards = ({
   count,
 }: ProductCardsTypes): JSX.Element => {
   const [isPending, startTransition] = useTransition();
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -56,6 +58,7 @@ export const ProductCards = ({
   const onAddToCart = (cartId: string, productId: string): void => {
     startTransition(async () => {
       await addToCart(cartId, productId);
+      router.refresh();
     });
   };
 
@@ -86,9 +89,12 @@ export const ProductCards = ({
             <CardFooter>
               <CustomButton
                 className="w-full"
-                onClick={() => onAddToCart(cartId, item.id)}
-                isLoading={isPending}
-                disabled={isPending}
+                onClick={() => {
+                  setActiveIndex(index);
+                  onAddToCart(cartId, item.id);
+                }}
+                isLoading={isPending && index === activeIndex}
+                disabled={isPending && index === activeIndex}
               >
                 Add To Cart
               </CustomButton>
