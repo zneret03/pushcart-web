@@ -5,7 +5,7 @@ import { Container } from '@/components/custom/Container';
 import { getCartItemsById } from '@/services/cart/cart.services';
 import { CartItemsProducts } from '@/lib/types/Carts';
 import { CartItems } from './components/CartItems';
-import Image from 'next/image';
+import { EmptyImageData } from '@/components/custom/EmptyData';
 
 export default async function Shop({
   params,
@@ -47,6 +47,8 @@ export default async function Shop({
           {(cartItems as CartItemsProducts[]).map((item: CartItemsProducts) => (
             <CartItems key={item.id} cartItems={item} />
           ))}
+
+          {(cartItems as CartItemsProducts[]).length <= 0 && <EmptyImageData />}
         </section>
       </main>
     </Container>

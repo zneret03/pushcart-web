@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { CartItemsProducts } from '@/lib/types/Carts';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { deleteCartItems } from '@/services/cart/cart.services';
 import { X } from 'lucide-react';
 import { JSX } from 'react';
 
@@ -13,6 +15,13 @@ interface CartItemsType {
 export const CartItems = ({ cartItems }: CartItemsType): JSX.Element => {
   const [hover, setHover] = useState<boolean>(false);
   const { products, quantity } = cartItems;
+
+  const router = useRouter();
+
+  const onDeleteCartItems = async (id: string): Promise<void> => {
+    await deleteCartItems(id);
+    router.refresh();
+  };
 
   return (
     <div
@@ -35,7 +44,13 @@ export const CartItems = ({ cartItems }: CartItemsType): JSX.Element => {
         </div>
       </section>
 
-      {hover && <X className="cursor-pointer text-gray-400" size={20} />}
+      {hover && (
+        <X
+          className="cursor-pointer text-gray-400"
+          size={20}
+          onClick={() => onDeleteCartItems(cartItems.id)}
+        />
+      )}
     </div>
   );
 };

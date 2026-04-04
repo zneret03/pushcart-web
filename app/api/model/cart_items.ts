@@ -52,3 +52,22 @@ export const addToCart = async (args: {
     return generalErrorResponse({ error: newError.message });
   }
 };
+
+export const deleteCartItems = async (id: string) => {
+  try {
+    const supabase = await createClient();
+
+    const { error } = await supabase.from('cart_items').delete().eq('id', id);
+
+    if (error) {
+      return generalErrorResponse({ error: error.message });
+    }
+
+    return successResponse({
+      message: 'Successfully delete cart items',
+    });
+  } catch (error) {
+    const newError = error as Error;
+    return generalErrorResponse({ error: newError.message });
+  }
+};

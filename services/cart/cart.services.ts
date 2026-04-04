@@ -90,3 +90,24 @@ export const addToCart = async (
     }
   }
 };
+
+export const deleteCartItems = async (id: string) => {
+  try {
+    const response = await axiosService.delete(
+      `/api/protected/cart_items/${id}`,
+    );
+
+    toast('Successfully', {
+      description: response.data.message,
+    });
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};

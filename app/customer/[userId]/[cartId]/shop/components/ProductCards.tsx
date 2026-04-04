@@ -17,8 +17,8 @@ import { Pagination } from '@/components/custom/Pagination';
 import { Input } from '@/components/ui/input';
 import { addToCart } from '@/services/cart/cart.services';
 import { debounce } from 'lodash';
+import { EmptyImageData } from '@/components/custom/EmptyData';
 import Image from 'next/image';
-import { useStackId } from 'recharts/types/cartesian/BarStack';
 
 interface ProductCardsTypes extends PaginationType {
   cartId: string;
@@ -103,20 +103,7 @@ export const ProductCards = ({
         ))}
       </div>
 
-      {products.length <= 0 && (
-        <div className="flex h-[85vh] flex-col items-center justify-center">
-          <Image
-            src="/images/error.svg"
-            alt="empty placeholder"
-            width={900}
-            height={900}
-            className="size-100"
-          />
-
-          <h1 className="text-2xl font-bold">Empty Product</h1>
-          <p className="text-sm text-gray-500">There is no product displayed</p>
-        </div>
-      )}
+      {products.length <= 0 && <EmptyImageData />}
 
       {products.length > 0 && (
         <Pagination {...{ totalPages, currentPage, count }} />
