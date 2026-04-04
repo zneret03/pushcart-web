@@ -3,6 +3,53 @@ import { axiosService } from '@/app/api/axios-client';
 import { toast } from 'sonner';
 import { Carts } from '@/lib/types/Carts';
 
+export const updateCartStatus = async (
+  status: string,
+  id: string,
+): Promise<void> => {
+  try {
+    const response = await axiosService.put(`/api/protected/cart/${id}`, {
+      status,
+      type: 'update-cart-status',
+    });
+
+    toast('Successfully', {
+      description: response.data.message,
+    });
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
+
+export const updateCart = async (userId: string, id: string): Promise<void> => {
+  try {
+    const response = await axiosService.put(`/api/protected/cart/${id}`, {
+      userId,
+      type: 'update-cart-cashier',
+    });
+
+    toast('Successfully', {
+      description: response.data.message,
+    });
+
+    return response.data.data;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
+
 export const getCarts = async (
   params: string,
 ): Promise<Carts[] | undefined> => {
@@ -10,6 +57,21 @@ export const getCarts = async (
     const response = await axiosService.get(`/api/protected/cart${params}`);
 
     return response.data.data as Carts[];
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      toast.error('ERROR!', {
+        description: e.response?.data.error,
+      });
+      throw e.response?.data.error;
+    }
+  }
+};
+
+export const getCartsById = async (id: string) => {
+  try {
+    const response = await axiosService.get(`/api/protected/cart/${id}`);
+
+    return response.data.data as Carts;
   } catch (e) {
     if (axios.isAxiosError(e)) {
       toast.error('ERROR!', {

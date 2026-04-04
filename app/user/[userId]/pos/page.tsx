@@ -18,6 +18,9 @@ export default async function PostPage({
   const carts = await getCarts(search ? `?search=${search}` : '');
   const cartItems = !cartId ? [] : await getCartItemsById(cartId, 'unpaid');
   const getAllVat = await getSpecificVat();
+  const specificUserCart = (carts as Carts[]).filter(
+    (item) => item.user_id === userId,
+  );
 
   return (
     <div className="container mx-auto h-auto space-y-4 p-12">
@@ -27,7 +30,7 @@ export default async function PostPage({
       </header>
 
       <Orders
-        carts={carts as Carts[]}
+        carts={specificUserCart as Carts[]}
         cartItems={cartItems as CartItemsProducts[]}
         cartId={cartId}
         userId={userId}

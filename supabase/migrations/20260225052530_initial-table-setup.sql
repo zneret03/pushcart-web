@@ -98,7 +98,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own profile" 
-ON profiles FOR SELECT TO authenticated USING (id = auth.uid());
+ON profiles FOR SELECT TO authenticated USING (true);
 
 CREATE POLICY "Admins can view all profiles" 
 ON profiles FOR SELECT TO authenticated USING (is_admin());
@@ -144,7 +144,8 @@ ON products FOR DELETE TO authenticated USING (is_admin());
 CREATE TABLE carts (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-    code_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL, 
+    customer_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    code_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('unpaid', 'paid', 'active')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE,
@@ -160,13 +161,13 @@ FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
 ALTER TABLE carts ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users view own carts, admins view all" 
-ON carts FOR SELECT TO authenticated USING (user_id = auth.uid() OR is_admin());
+ON carts FOR SELECT TO authenticated USING (true);
 
 CREATE POLICY "Users can create carts" 
-ON carts FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
+ON carts FOR INSERT TO authenticated WITH CHECK (true);
 
 CREATE POLICY "Users and admins can update carts" 
-ON carts FOR UPDATE TO authenticated USING (user_id = auth.uid() OR is_admin());
+ON carts FOR UPDATE TO authenticated USING (true);
 
 CREATE TABLE cart_items (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

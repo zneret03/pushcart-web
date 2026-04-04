@@ -6,6 +6,7 @@ export const editCartItems = async (
   id: string,
 ) => {
   try {
+    console.log(data, id);
     const supabase = await createClient();
 
     const { error } = await supabase

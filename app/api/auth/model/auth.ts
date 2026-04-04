@@ -20,6 +20,7 @@ export const signInCustomer = async () => {
       .from('carts')
       .insert({
         user_id: data.user?.id,
+        customer_id: data.user?.id,
         status: 'active',
       })
       .select()
