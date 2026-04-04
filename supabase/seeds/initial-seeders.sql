@@ -44,16 +44,16 @@ BEGIN
   -- ==========================================
   
   INSERT INTO public.products (name, sku, price, stock_quantity, category_id) VALUES
-    ('Spaghetti Bolognese', 'SKU-FOOD-001', 12.50, 45, v_cat_food_id),
-    ('Classic Cheeseburger', 'SKU-FOOD-002', 8.99, 30, v_cat_food_id),
-    ('Grilled Chicken Salad', 'SKU-FOOD-003', 10.00, 20, v_cat_food_id),
-    ('Iced Latte', 'SKU-DRNK-001', 4.50, 100, v_cat_drink_id),
-    ('Mango Smoothie', 'SKU-DRNK-002', 5.50, 50, v_cat_drink_id),
-    ('Sparkling Water', 'SKU-DRNK-003', 2.00, 200, v_cat_drink_id),
-    ('Potato Chips', 'SKU-SNCK-001', 1.50, 80, v_cat_snack_id),
+    ('Spaghetti Bolognese', 'SKU-FOOD-001', 12, 45, v_cat_food_id),
+    ('Classic Cheeseburger', 'SKU-FOOD-002', 9, 30, v_cat_food_id),
+    ('Grilled Chicken Salad', 'SKU-FOOD-003', 10, 20, v_cat_food_id),
+    ('Iced Latte', 'SKU-DRNK-001', 4, 100, v_cat_drink_id),
+    ('Mango Smoothie', 'SKU-DRNK-002', 5, 50, v_cat_drink_id),
+    ('Sparkling Water', 'SKU-DRNK-003', 2, 200, v_cat_drink_id),
+    ('Potato Chips', 'SKU-SNCK-001', 1, 80, v_cat_snack_id),
     -- Low stock items
     ('Premium Ribeye Steak', 'SKU-FOOD-004', 35.00, 4, v_cat_food_id),
-    ('Craft IPA Beer', 'SKU-DRNK-004', 7.00, 2, v_cat_drink_id),
-    ('Artisan Chocolate Truffle', 'SKU-SNCK-002', 3.50, 1, v_cat_snack_id);
+    ('Craft IPA Beer', 'SKU-DRNK-004', 7, 2, v_cat_drink_id),
+    ('Artisan Chocolate Truffle', 'SKU-SNCK-002', 4, 1, v_cat_snack_id);
 
 END $$;
