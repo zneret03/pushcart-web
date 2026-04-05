@@ -69,7 +69,9 @@ export const getCarts = async (
 
 export const getCartsById = async (id: string) => {
   try {
-    const response = await axiosService.get(`/api/protected/cart/${id}`);
+    const response = await axiosService.get(
+      `/api/protected/cart/get_one/${id}`,
+    );
 
     return response.data.data as Carts;
   } catch (e) {

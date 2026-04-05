@@ -7,10 +7,10 @@ import { NextRequest } from 'next/server';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ userId: string }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId } = await params;
+    const { id } = await params;
     const supabase = await createClient();
 
     const { data, error } = await supabase
@@ -18,7 +18,7 @@ export async function GET(
       .select(
         'id, user_id, customer_id, code_token, status, created_at, updated_at, archived_at',
       )
-      .eq('user_id', userId)
+      .eq('id', id)
       .maybeSingle();
 
     if (error) {

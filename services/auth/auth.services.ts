@@ -20,10 +20,7 @@ export const anonymouslyLogin = async (): Promise<UserForm | undefined> => {
   }
 };
 
-export const signIn = async (
-  email: string,
-  password: string,
-): Promise<UserForm | undefined> => {
+export const signIn = async (email: string, password: string) => {
   try {
     const response = await axios.post<AxiosResponse<UserForm>>('/api/auth', {
       email,

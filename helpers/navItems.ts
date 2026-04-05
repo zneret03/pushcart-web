@@ -14,11 +14,12 @@ const parentPathName = 'admin';
 export const customerMenus = (
   categories: Categories[] | null,
   id: string,
+  cartId: string,
 ): SideMenu[] => {
   const newCategories = categories?.map((item) => {
     return {
       title: item.name,
-      url: `/customer/${id}/shop?category=${item.name}`,
+      url: `/customer/${id}/${cartId}/shop?category=${item.name}`,
       icon: Ham,
       isActive: true,
     };

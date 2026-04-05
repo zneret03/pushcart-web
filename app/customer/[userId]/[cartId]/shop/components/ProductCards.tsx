@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { addToCart } from '@/services/cart/cart.services';
 import { debounce } from 'lodash';
 import { EmptyImageData } from '@/components/custom/EmptyData';
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
 interface ProductCardsTypes extends PaginationType {
@@ -62,13 +63,21 @@ export const ProductCards = ({
     });
   };
 
+  const clearCategory = (): void => {
+    router.replace(pathname);
+  };
+
   return (
     <main className="space-y-2">
-      <Input
-        placeholder="Search user by product by name"
-        onChange={(event) => onSearch(event)}
-        className="max-w-sm"
-      />
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder="Search user by product by name"
+          onChange={(event) => onSearch(event)}
+          className="max-w-sm"
+        />
+
+        <Button onClick={clearCategory}>Reset Category</Button>
+      </div>
       <div className="grid grid-cols-3 gap-2">
         {products.map((item, index) => (
           <Card className="relative w-full pt-0" key={item.id}>

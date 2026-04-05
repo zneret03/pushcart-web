@@ -29,8 +29,10 @@ export function AppSidebar({
 
   const pathname = usePathname();
 
+  const cartId = pathname.split('/')[3];
+
   const menus = pathname.startsWith('/customer')
-    ? customerMenus(categories, id)
+    ? customerMenus(categories, id, cartId)
     : adminMenus(id, today.getFullYear());
 
   // This is sample data.

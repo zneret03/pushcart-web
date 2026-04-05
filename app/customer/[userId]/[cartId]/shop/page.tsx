@@ -26,14 +26,18 @@ export default async function Shop({
   searchParams,
 }: {
   params: Promise<{ cartId: string; userId: string }>;
-  searchParams: Promise<{ page: string; search: string }>;
+  searchParams: Promise<{ page: string; search: string; category: string }>;
 }): Promise<JSX.Element> {
   const { cartId, userId } = await params;
-  const { page, search } = await searchParams;
+  const { page, search, category } = await searchParams;
 
-  const response = await getProducts(
-    `?page=${page || 1}&perPage=10&search=${search}&sortBy=created_at`,
-  );
+  const hasFilterCategory = !category
+    ? `?page=${page || 1}&perPage=10&search=${search}&sortBy=created_at`
+    : `?page=${page || 1}&perPage=10&search=${search}&sortBy=created_at&filter=${category}`;
+
+  const response = await getProducts(hasFilterCategory);
+
+  console.log(response);
 
   const profilesResponse = await getProfiles(
     `?page=1&perPage=100&sortBy=created_at`,
@@ -106,11 +110,17 @@ export default async function Shop({
                 all user cart orders can be seen here
               </p>
             </div>
-            <section className="h-[20rem] space-y-4 overflow-auto">
-              {(cartItems as CartItemsProducts[]).map(
-                (item: CartItemsProducts) => (
-                  <CartItems key={item.id} cartItems={item} />
-                ),
+            <section
+              className={`${countCartItems > 0 ? 'h-[20rem]' : 'h-auto'} space-y-4 overflow-auto`}
+            >
+              {countCartItems <= 0 ? (
+                <EmptyImageData />
+              ) : (
+                (cartItems as CartItemsProducts[]).map(
+                  (item: CartItemsProducts) => (
+                    <CartItems key={item.id} cartItems={item} />
+                  ),
+                )
               )}
             </section>
 
@@ -141,8 +151,6 @@ export default async function Shop({
                 />
               )}
             </Card>
-
-            {countCartItems <= 0 && <EmptyImageData />}
           </section>
         </main>
       )}
