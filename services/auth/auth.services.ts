@@ -9,7 +9,7 @@ export const anonymouslyLogin = async (): Promise<UserForm | undefined> => {
       type: 'customer-sign-in',
     });
 
-    return response.data.data.user;
+    return response.data.data;
   } catch (e) {
     if (axios.isAxiosError(e)) {
       toast.error('ERROR!', {
@@ -20,10 +20,7 @@ export const anonymouslyLogin = async (): Promise<UserForm | undefined> => {
   }
 };
 
-export const signIn = async (
-  email: string,
-  password: string,
-): Promise<UserForm | undefined> => {
+export const signIn = async (email: string, password: string) => {
   try {
     const response = await axios.post<AxiosResponse<UserForm>>('/api/auth', {
       email,

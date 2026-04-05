@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
     let query = supabase
       .from('carts')
-      .select('id, code_token, created_at')
+      .select('id, code_token, user_id, created_at')
       .eq('status', 'unpaid');
 
     if (search) {
@@ -19,8 +19,6 @@ export async function GET(req: NextRequest) {
     }
 
     const { data, error } = await query;
-
-    console.log(data);
 
     if (error) {
       console.error(error.message);

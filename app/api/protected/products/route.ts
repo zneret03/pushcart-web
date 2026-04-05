@@ -20,14 +20,19 @@ export async function GET(req: NextRequest) {
     const sortBy = url.get('sortBy') || 'created_at';
     const search = url.get('search') || '';
     const limit = url.get('limit') || '';
+    const filter = url.get('filter') || '';
+
+    const hasNoFilter = !filter
+      ? 'categories(id, name)'
+      : 'categories!inner(id, name)';
 
     const { data, error, count, totalPages, currentPage } =
       await paginatedData<Products>({
         tableName: 'products',
         supabase,
-        columns:
-          'id, name, sku, price, categories(id, name), stock_quantity, image_url, created_at, updated_at',
+        columns: `id, name, sku, price, ${hasNoFilter}, stock_quantity, image_url, created_at, updated_at`,
         search: { column: 'name', query: search },
+        specificTable: { column: 'categories.name', tableId: filter },
         page,
         perPage,
         sortBy,

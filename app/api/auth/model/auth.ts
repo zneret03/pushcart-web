@@ -16,9 +16,26 @@ export const signInCustomer = async () => {
       return generalErrorResponse({ error: error.message });
     }
 
+    const { data: cartData, error: cartError } = await supabase
+      .from('carts')
+      .insert({
+        user_id: data.user?.id,
+        customer_id: data.user?.id,
+        status: 'active',
+      })
+      .select()
+      .maybeSingle();
+
+    if (cartError) {
+      return generalErrorResponse({ error: cartError.message });
+    }
+
     return successResponse({
       message: 'Successfully added product',
-      data,
+      data: {
+        ...data,
+        cart: cartData,
+      },
     });
   } catch (error) {
     const newError = error as Error;

@@ -1,3 +1,4 @@
+import { Categories } from '@/lib/types/categories';
 import { SideMenu } from '@/lib/types/menus';
 import {
   LayoutDashboard,
@@ -9,6 +10,23 @@ import {
 } from 'lucide-react';
 
 const parentPathName = 'admin';
+
+export const customerMenus = (
+  categories: Categories[] | null,
+  id: string,
+  cartId: string,
+): SideMenu[] => {
+  const newCategories = categories?.map((item) => {
+    return {
+      title: item.name,
+      url: `/customer/${id}/${cartId}/shop?category=${item.name}`,
+      icon: Ham,
+      isActive: true,
+    };
+  });
+
+  return (newCategories as SideMenu[]) || [];
+};
 
 export const adminMenus = (id: string, year: number): SideMenu[] => [
   {
