@@ -93,11 +93,11 @@ async function main() {
 
   const env = { ...loadEnvFile(path.join(projectRoot, '.env')), ...process.env };
   const url = env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = env.NEXT_PUBLIC_SUPABASE_SERVICE_SECRET_KEY;
+  const serviceKey = env.SUPABASE_SECRET_KEY;
 
   if (!url || !serviceKey) {
     console.error(
-      'Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_SERVICE_SECRET_KEY.\n' +
+      'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SECRET_KEY.\n' +
         'Set them in .env (see `make run-dev`) or export them before running this script.',
     );
     process.exitCode = 1;

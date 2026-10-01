@@ -12,6 +12,9 @@ export async function GET() {
     const { data, error } = await supabase
       .from('vat_rates')
       .select('id, rate')
+      .eq('is_active', true)
+      .order('updated_at', { ascending: false, nullsFirst: false })
+      .limit(1)
       .maybeSingle();
 
     if (error) {

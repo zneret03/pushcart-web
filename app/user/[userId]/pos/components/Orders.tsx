@@ -11,6 +11,7 @@ import { TabsContainer } from '@/components/custom/Tabs';
 import { EmptyContainer } from '@/components/custom/EmptyContainer';
 import { MenuOptions } from '@/lib/types/MenuOptions';
 import { calculateCartTotal } from '../helpers/calculateCartTotal';
+import { calculateTotalPayment, calculateVat } from '../helpers/calculateVat';
 import { formatCurrency } from '@/helpers/formatAmountPh';
 import { CustomButton } from '@/components/custom/CustomButton';
 import { addOrders } from '@/services/orders/orders.services';
@@ -56,9 +57,10 @@ export function Orders({
     },
   ];
 
-  const vatTax = tax?.rate || 0;
+  const vatRate = tax?.rate || 0;
   const subTotal = calculateCartTotal(cartItems) - discount;
-  const totalPayment = subTotal + vatTax;
+  const vatTax = calculateVat(subTotal, vatRate);
+  const totalPayment = calculateTotalPayment(subTotal, vatTax);
 
   const toggleDiscount = (): void => {
     setHasDiscount((prevState) => !prevState);
@@ -116,7 +118,9 @@ export function Orders({
 
           {/* Service Tax Row */}
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Service Tax</span>
+            <span className="text-muted-foreground">
+              Service Tax ({vatRate}%)
+            </span>
             <span className="text-foreground font-semibold">
               {formatCurrency(vatTax)}
             </span>

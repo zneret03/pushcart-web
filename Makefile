@@ -38,7 +38,7 @@ setup-supabase: init-log
 		echo "NEXT_IMAGE_PUBLIC_URL=http://localhost:54321/storage/**" >> .env; \
 		echo "NEXT_PUBLIC_SUPABASE_URL=$$(grep 'Project URL' supabase_output.txt | grep -Eo 'http://[a-zA-Z0-9.:]+' | head -1)" >> .env; \
 		echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$$(grep 'Publishable' supabase_output.txt | grep -Eo 'sb_publishable_[a-zA-Z0-9_-]+' | head -1)" >> .env; \
-		echo "NEXT_PUBLIC_SUPABASE_SERVICE_SECRET_KEY=$$(grep 'Secret' supabase_output.txt | grep -Eo 'sb_secret_[a-zA-Z0-9_-]+' | head -1)" >> .env; \
+		echo "SUPABASE_SECRET_KEY=$$(grep 'Secret' supabase_output.txt | grep -Eo 'sb_secret_[a-zA-Z0-9_-]+' | head -1)" >> .env; \
 		echo "NEXT_PUBLIC_SUPABASE_DB_URL=$$(grep 'postgresql://' supabase_output.txt | grep -Eo 'postgresql://[a-zA-Z0-9.:@/-]+' | head -1)" >> .env; \
 		echo "[$(TIMESTAMP)] .env file created successfully" | tee -a $(LOG_FILE); \
 	else \
