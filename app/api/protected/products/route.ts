@@ -32,7 +32,9 @@ export async function GET(req: NextRequest) {
         supabase,
         columns: `id, name, sku, price, ${hasNoFilter}, stock_quantity, image_url, created_at, updated_at`,
         search: { column: 'name', query: search },
-        specificTable: { column: 'categories.name', tableId: filter },
+        specificTable: filter
+          ? { column: 'categories.name', tableId: filter }
+          : null,
         page,
         perPage,
         sortBy,

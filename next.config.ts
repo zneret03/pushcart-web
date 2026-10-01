@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ['image/avif', 'image/webp'],
+    qualities: [75, 90],
     dangerouslyAllowLocalIP: true,
     remotePatterns: [new URL(`${process.env.NEXT_IMAGE_PUBLIC_URL}`)],
   },

@@ -2,8 +2,12 @@ import axios from 'axios';
 import { AxiosResponse } from 'axios';
 import { toast } from 'sonner';
 import { UserForm } from '@/lib/types/users';
+import { Carts } from '@/lib/types/Carts';
+import { User } from '@supabase/supabase-js';
 
-export const anonymouslyLogin = async (): Promise<UserForm | undefined> => {
+export const anonymouslyLogin = async (): Promise<
+  { user: User | null; cart: Carts | null } | undefined
+> => {
   try {
     const response = await axios.post('/api/auth', {
       type: 'customer-sign-in',

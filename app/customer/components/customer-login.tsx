@@ -31,9 +31,11 @@ export function CustomerLogin({
       try {
         const data = await anonymouslyLogin();
 
-        setUserInfo(data.user as UserForm);
+        if (!data?.user) return;
 
-        router.push(`/customer/${data?.user?.id}/${data?.cart?.id}/shop`);
+        setUserInfo(data.user as unknown as UserForm);
+
+        router.push(`/customer/${data.user.id}/${data.cart?.id}/shop`);
       } catch (error) {
         setMessage(error as string);
       }

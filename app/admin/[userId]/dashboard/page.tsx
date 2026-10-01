@@ -19,8 +19,11 @@ export default async function AdminPage({
   searchParams: Promise<{ year: string }>;
 }) {
   const { year } = await searchParams;
-  const response = await getDashboardStats(Number(year));
   const today = new Date();
+  // Fall back to the current year when no (or an invalid) ?year= is provided,
+  // otherwise the request would target /api/protected/dashboard/NaN.
+  const selectedYear = Number(year) || today.getFullYear();
+  const response = await getDashboardStats(selectedYear);
 
   return (
     <Container title="Dashboard" description="You can see all satistics here">

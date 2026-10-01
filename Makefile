@@ -1,6 +1,13 @@
 LOG_FILE=supabase_setup.log
 TIMESTAMP=$(shell date +"%Y-%m-%d %H:%M:%S")
 
+# Supabase CLI entry point. `yarn supabase` is routed through scripts/supabase.mjs,
+# which picks the right binary per platform. This matters on Windows: the npm
+# `supabase` package only ships `bin/supabase.exe`, while its package.json `bin`
+# field points at `bin/supabase`, so Yarn's binary resolution fails there.
+# Override if needed: `make run-dev SUPABASE="npx supabase"`.
+SUPABASE ?= yarn supabase
+
 init-log:
 	@echo "[$(TIMESTAMP)] Initializing setup process" | tee $(LOG_FILE)
 	@if [ ! -f supabase/config.toml ]; then \
@@ -17,7 +24,7 @@ setup-supabase: init-log
 	fi
 	@echo "[$(TIMESTAMP)] Docker is running, executing 'yarn supabase start'..." | tee -a $(LOG_FILE)
 	@rm -f .env
-	@if yarn supabase start > supabase_output.txt 2>> $(LOG_FILE); then \
+	@if $(SUPABASE) start > supabase_output.txt 2>> $(LOG_FILE); then \
 		echo "[$(TIMESTAMP)] Supabase started successfully" | tee -a $(LOG_FILE); \
 	else \
 		echo "[$(TIMESTAMP)] Error: Failed to start Supabase. Check $(LOG_FILE) for details." | tee -a $(LOG_FILE); \
@@ -43,12 +50,12 @@ setup-supabase: init-log
 	@echo "[$(TIMESTAMP)] Temporary output file cleaned up" | tee -a $(LOG_FILE)
 
 run-dev:
-	yarn supabase start --ignore-health-check
+	$(SUPABASE) start --ignore-health-check
 	yarn dev
 	@echo "running dev with supabase"
 
 run-start:
-	yarn supabase start --ignore-health-check
+	$(SUPABASE) start --ignore-health-check
 	yarn start
 	@echo "Running prod with supabase"
 
@@ -62,12 +69,16 @@ build-app:
 	@echo "Finish checking linter and building"
 
 stop-db:
-	@yarn supabase stop
+	@$(SUPABASE) stop
 	@echo "stopping supabase db"
+
+cleanup-anonymous:
+	@yarn cleanup:anonymous
+	@echo "cleaning up anonymous customer users"
 
 clean:
 	@echo "[$(TIMESTAMP)] Stopping Supabase and cleaning up..." | tee -a $(LOG_FILE)
-	@if yarn supabase stop >> $(LOG_FILE) 2>&1; then \
+	@if $(SUPABASE) stop >> $(LOG_FILE) 2>&1; then \
 		echo "[$(TIMESTAMP)] Supabase stopped successfully" | tee -a $(LOG_FILE); \
 	else \
 		echo "[$(TIMESTAMP)] Warning: Failed to stop Supabase. Check $(LOG_FILE) for details." | tee -a $(LOG_FILE); \
@@ -76,18 +87,19 @@ clean:
 	@echo "[$(TIMESTAMP)] .env file removed" | tee -a $(LOG_FILE)
 
 migrate-new:
-	@yarn supabase migration new $(name)
+	@$(SUPABASE) migration new $(name)
 
 migrate-up:
-	@yarn supabase migration up
+	@$(SUPABASE) migration up
 
 migrate-diff:
-	@yarn supabase db diff --local > supabase/migrations/$(shell date +%Y%m%d%H%M%S)_schema_changes.sql
+	@$(SUPABASE) db diff --local > supabase/migrations/$(shell date +%Y%m%d%H%M%S)_schema_changes.sql
 
 migrate-reset:
-	@yarn supabase db reset
+	@$(SUPABASE) db reset
 
 generate-types:
-	yarn supabase gen types typescript --local
+	$(SUPABASE) gen types typescript --local
 
-.PHONY: all init-log setup-supabase clean migrate-new migrate-up migrate-diff migrate-reset stop-db run-dev
+.PHONY: all init-log setup-supabase clean migrate-new migrate-up migrate-diff migrate-reset \
+	stop-db cleanup-anonymous run-dev run-start start-app build-app generate-types

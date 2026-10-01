@@ -46,7 +46,7 @@ export const paginatedData = async <TData>({
     query = query.limit(limit);
   }
 
-  if (specificTable?.column) {
+  if (specificTable?.column && specificTable.tableId) {
     query = query.eq(specificTable.column, specificTable.tableId);
   }
 

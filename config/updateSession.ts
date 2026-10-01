@@ -53,8 +53,9 @@ export async function updateSession(request: NextRequest) {
     .eq('id', user?.id)
     .single();
 
-  const baseAdminURL = `/admin/${userData?.id}`;
-  const baseUserURL = `/user/${userData?.id}`;
+  const isAdmin = userData?.role === 'admin';
+  const baseAdminURL = `/admin/${user?.id}`;
+  const baseUserURL = `/user/${user?.id}`;
 
   const protectedAdminRoutes = [
     'dashboard',
@@ -78,30 +79,18 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/sign-in', request.url));
   }
 
-  if (
-    userData?.role === 'user' &&
-    isRestrictedPath(userRestrictedRoutes, pathname)
-  ) {
+  // Anyone who is not an admin must never be routed to (or kept on) an admin
+  // URL. This covers role 'user' as well as authenticated users whose profile
+  // row is missing, which previously fell through to the admin pages.
+  if (user && !isAdmin && isRestrictedPath(userRestrictedRoutes, pathname)) {
     return NextResponse.redirect(new URL(`${baseUserURL}/pos`, request.url));
   }
 
-  if (
-    userData?.role === 'admin' &&
-    isRestrictedPath(adminRestrictedRoutes, pathname)
-  ) {
+  if (isAdmin && isRestrictedPath(adminRestrictedRoutes, pathname)) {
     return NextResponse.redirect(new URL(`${baseAdminURL}/pos`, request.url));
   }
 
-  if (
-    userData?.role === 'user' &&
-    isRestrictedPath(userRestrictedRoutes, pathname)
-  ) {
-    return NextResponse.redirect(
-      new URL(`${baseAdminURL}/dashboard`, request.url),
-    );
-  }
-
-  if (user && pathname === '/auth/sign-in' && userData?.role === 'admin') {
+  if (user && pathname === '/auth/sign-in' && isAdmin) {
     return NextResponse.redirect(
       new URL(`${baseAdminURL}/dashboard`, request.url),
     );
