@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { cn } from '@/lib/utils';
 import { CustomButton } from '@/components/custom/CustomButton';
+import { Button } from '@/components/ui/button';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { SignIn, UserForm } from '@/lib/types/users';
@@ -78,6 +79,15 @@ export function CustomerLogin({
           >
             Go to Shop
           </CustomButton>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full cursor-pointer"
+            onClick={() => router.push('/customer/guest/scan-start')}
+          >
+            Start self-checkout
+          </Button>
         </div>
       </form>
     </FormProvider>

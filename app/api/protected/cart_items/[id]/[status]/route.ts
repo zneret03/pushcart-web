@@ -16,7 +16,8 @@ export async function GET(
     const { data, error } = await supabase
       .from('cart_items')
       .select(
-        'id, carts:cart_id!inner(status), products(name, sku, price, stock_quantity, image_url, created_at), quantity, created_at',
+        // product_id (and products.id) are what the tablet's per-product edit route keys on.
+        'id, product_id, carts:cart_id!inner(status), products(id, name, sku, price, stock_quantity, image_url, created_at), quantity, created_at',
       )
       .eq('carts.status', status)
       .eq('cart_id', id);

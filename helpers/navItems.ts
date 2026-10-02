@@ -7,6 +7,7 @@ import {
   Files,
   Coins,
   Ham,
+  Store,
 } from 'lucide-react';
 
 const parentPathName = 'admin';
@@ -16,14 +17,12 @@ export const customerMenus = (
   id: string,
   cartId: string,
 ): SideMenu[] => {
-  const newCategories = categories?.map((item) => {
-    return {
-      title: item.name,
-      url: `/customer/${id}/${cartId}/shop?category=${item.name}`,
-      icon: Ham,
-      isActive: true,
-    };
-  });
+  const newCategories = categories?.map((item) => ({
+    title: item.name,
+    url: `/customer/${id}/${cartId}/shop?category=${item.name}`,
+    icon: Ham,
+    isActive: true,
+  }));
 
   return (newCategories as SideMenu[]) || [];
 };
@@ -63,6 +62,12 @@ export const adminMenus = (id: string, year: number): SideMenu[] => [
     url: `/${parentPathName}/${id}/profiles`,
     title: 'Profiles',
     icon: Users,
+    isActive: true,
+  },
+  {
+    url: `/${parentPathName}/${id}/pos-mapping`,
+    title: 'POS Mapping',
+    icon: Store,
     isActive: true,
   },
 ];
