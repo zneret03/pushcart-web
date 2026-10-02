@@ -1,0 +1,61 @@
+name: POS contract
+
+# Does this repo still answer SCANnCART the way SCANnCART was written against?
+#
+# SCANnCART's desktop half speaks two routes here (`/api/pos/session`, `/api/pos/sync`), one header
+# (`x-pos-token`) and the status codes `app/api/helpers/response.ts` hands out. The pair are a contract
+# across two repositories, and the failure this catches is the quiet one: SCANnCART's stand-in and its
+# client were both written from these files, so a route that moved *here* keeps every test there green
+# until somebody runs a check by hand.
+#
+# `scripts/pos-contract.mjs` derives that surface from this repo's own source and compares it with
+# `scripts/pos-contract.json`. A pull request that moves it fails until the record is regenerated,
+# which is what makes the change visible in a diff rather than silently travelling - the record is the
+# signal, not the obstacle. That regeneration is one command, so the cost of a deliberate change is a
+# line in the diff and a sentence in the pull request.
+#
+# The watched files are the paths filter below, so this runs on the changes that can move the surface
+# and not on the rest: a commit that only touches a component or a migration has nothing to check
+# here, and making every pull request pay for it is how a guard becomes noise. The filter is also why
+# the script can be strict about a checkout with no routes in it - a branch without `app/api/pos/`
+# does not match `app/api/pos/**`, so it never reaches the run that would fail on one.
+#
+# The other half of this pair lives in SCANnCART: `make verify-pos-contract` re-derives the same
+# surface from *this* repo and holds `desktop/src/main/posContract.json` to it, so a change here is
+# caught on both sides rather than either one trusting the other's file.
+
+on:
+  push:
+    branches: [main, scanncart-integration]
+    paths:
+      - 'app/api/pos/**'
+      - 'app/api/model/pos_sync.ts'
+      - 'app/api/helpers/response.ts'
+      - 'scripts/pos-contract.mjs'
+      - 'scripts/pos-contract.json'
+      - '.github/workflows/pos-contract.yml'
+  pull_request:
+    paths:
+      - 'app/api/pos/**'
+      - 'app/api/model/pos_sync.ts'
+      - 'app/api/helpers/response.ts'
+      - 'scripts/pos-contract.mjs'
+      - 'scripts/pos-contract.json'
+      - '.github/workflows/pos-contract.yml'
+  workflow_dispatch:
+
+jobs:
+  pos-contract:
+    name: The POS surface SCANnCART speaks has not moved
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node only, no dependencies: the script reads four files as text, so nothing is installed and
+      # the job is a checkout and a node run.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: The recorded POS surface still matches the routes
+        run: node scripts/pos-contract.mjs
