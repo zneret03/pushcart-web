@@ -64,6 +64,10 @@ export interface PosSessionInfo {
   cart_id: string;
   cart_code: string;
   last_sync_at: string | null;
+  // What the scanner saw and could not resolve (SCANnCART basket mode). Above zero, Finish
+  // is refused until staff have checked the basket. Older rows report neither field.
+  pending_review?: number;
+  review_reasons?: string[];
 }
 
 export interface PosCartItem {
@@ -158,29 +162,18 @@ export const getPosCartItems = async (
   }
 };
 
-export const editPosCartItem = async (
+// The one manual correction on a camera-managed cart: staff lower a quantity, behind a PIN.
+// Customer add/change/remove is gone — the camera owns the cart.
+export const staffRemovePosItem = async (
   cartId: string,
   productId: string,
   quantity: number,
+  pin: string,
 ): Promise<void> => {
   try {
-    await axiosService.put(
-      `/api/protected/station-session/items/${productId}`,
-      { cart_id: cartId, quantity },
-    );
-  } catch (e) {
-    return apiError(e);
-  }
-};
-
-export const removePosCartItem = async (
-  cartId: string,
-  productId: string,
-): Promise<void> => {
-  try {
-    await axiosService.delete(
-      `/api/protected/station-session/items/${productId}`,
-      { data: { cart_id: cartId } },
+    await axiosService.post(
+      `/api/protected/station-session/items/${productId}/staff-remove`,
+      { cart_id: cartId, quantity, pin },
     );
   } catch (e) {
     return apiError(e);

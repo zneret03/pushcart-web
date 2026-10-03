@@ -47,6 +47,21 @@ function validate(
     seen.add(item.class_name);
   }
 
+  if (b.pending_review !== undefined) {
+    if (!Number.isInteger(b.pending_review) || b.pending_review < 0) {
+      return { error: 'pending_review must be an integer >= 0' };
+    }
+  }
+  if (b.review_reasons !== undefined) {
+    if (
+      !Array.isArray(b.review_reasons) ||
+      b.review_reasons.length > 50 ||
+      b.review_reasons.some((r) => typeof r !== 'string' || r.length > 300)
+    ) {
+      return { error: 'review_reasons must be at most 50 strings' };
+    }
+  }
+
   return { payload: b as PosSyncPayload };
 }
 

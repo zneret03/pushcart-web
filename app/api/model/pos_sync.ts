@@ -1,5 +1,6 @@
-import { createClient } from '@/config';
+import { createClient, createServiceClient } from '@/config';
 import {
+  badRequestResponse,
   conflictRequestResponse,
   forbiddenResponse,
   generalErrorResponse,
@@ -17,6 +18,10 @@ export interface PosSyncPayload {
   session_ref: string;
   station_id: string;
   items: PosSyncItem[];
+  // SCANnCART basket mode: interactions the camera saw and could not resolve. Absent from
+  // a counter-mode sync, which has no such notion and leaves the stored state alone.
+  pending_review?: number;
+  review_reasons?: string[];
 }
 
 // Map each function's {error} codes onto the shared response helpers (§3.4). The
@@ -27,7 +32,10 @@ const mapError = (error: string, items?: unknown): Response => {
       return forbiddenResponse({ error: 'forbidden' });
     case 'unknown_station':
       return notFoundResponse({ error: 'unknown_station' });
+    case 'invalid_quantity':
+      return badRequestResponse({ error });
     case 'busy':
+    case 'review_pending':
     case 'session_closed':
     case 'cart_paid':
     case 'cart_not_active':
@@ -112,6 +120,26 @@ export const reconcileCart = async (payload: PosSyncPayload) => {
 
     if (result?.error) {
       return mapError(result.error);
+    }
+
+    // After the reconcile, so a closed session is reported by the call that owns that
+    // answer. The review state is the scanner's whole current list, not a delta, so a
+    // later sync that fails to land is corrected by the next heartbeat.
+    if (typeof payload.pending_review === 'number') {
+      const { data: review, error: reviewError } = await supabase.rpc(
+        'pos_set_review',
+        {
+          p_session_ref: payload.session_ref,
+          p_station_id: payload.station_id,
+          p_pending: payload.pending_review,
+          p_reasons: payload.review_reasons ?? [],
+        },
+      );
+      if (reviewError) {
+        return generalErrorResponse({ error: reviewError.message });
+      }
+      const reviewResult = review as { error?: string } | null;
+      if (reviewResult?.error) return mapError(reviewResult.error);
     }
 
     return successResponse({
@@ -231,6 +259,43 @@ export const finishCart = async (cartId: string) => {
 
     return successResponse({
       message: 'Successfully finished cart',
+      data: result,
+    });
+  } catch (error) {
+    const newError = error as Error;
+    return generalErrorResponse({ error: newError.message });
+  }
+};
+
+// The one manual correction left on a camera-managed cart: staff lower a quantity. The
+// route has already checked the PIN and that the caller owns the cart; the function is
+// service-role only, so a browser holding the anon key cannot call it around the PIN.
+export const staffRemove = async (
+  cartId: string,
+  productId: string,
+  quantity: number,
+) => {
+  try {
+    const supabase = createServiceClient();
+
+    const { data, error } = await supabase.rpc('pos_staff_remove', {
+      p_cart_id: cartId,
+      p_product_id: productId,
+      p_quantity: quantity,
+    });
+
+    if (error) {
+      return generalErrorResponse({ error: error.message });
+    }
+
+    const result = data as { error?: string } | null;
+
+    if (result?.error) {
+      return mapError(result.error);
+    }
+
+    return successResponse({
+      message: 'Successfully removed item',
       data: result,
     });
   } catch (error) {

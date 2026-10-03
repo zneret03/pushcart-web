@@ -47,6 +47,28 @@ export async function cartItemAccess(supabase: SupabaseClient, id: string) {
   if (error)
     return { response: generalErrorResponse({ error: error.message }) };
   if (!item) return { response: forbiddenResponse() };
-  return cartAccess(supabase, item.cart_id);
+  const access = await cartAccess(supabase, item.cart_id);
+  return { ...access, cartId: item.cart_id as string };
 }
 
+// A cart in an open self-checkout session is the camera's: nobody but an admin writes its
+// items through the generic routes. The database refuses those writes too (a restrictive
+// policy on cart_items), but there a refused write is a silent no-op; this is what turns it
+// into an answer the caller can read.
+export async function posLockResponse(
+  supabase: SupabaseClient,
+  cartId: string,
+  admin: boolean,
+) {
+  if (admin) return null;
+  const { data, error } = await supabase.rpc('cart_in_pos_session', {
+    p_cart_id: cartId,
+  });
+  if (error) return generalErrorResponse({ error: error.message });
+  return data === true
+    ? forbiddenResponse({
+        error: 'pos_cart_locked',
+        message: 'This cart is managed by the self-checkout camera.',
+      })
+    : null;
+}

@@ -1,6 +1,10 @@
 import { generalErrorResponse, successResponse } from '../helpers/response';
 import { createClient } from '@/config';
-import { cartAccess, cartItemAccess } from '../helpers/cart-access';
+import {
+  cartAccess,
+  cartItemAccess,
+  posLockResponse,
+} from '../helpers/cart-access';
 
 export const editCartItems = async (
   data: { [key: string]: string | Date },
@@ -10,6 +14,8 @@ export const editCartItems = async (
     const supabase = await createClient();
     const access = await cartItemAccess(supabase, id);
     if (access.response) return access.response;
+    const locked = await posLockResponse(supabase, access.cartId, access.admin);
+    if (locked) return locked;
 
     const { error } = await supabase
       .from('cart_items')
@@ -39,6 +45,8 @@ export const addToCart = async (args: {
 
     const access = await cartAccess(supabase, cart_id);
     if (access.response) return access.response;
+    const locked = await posLockResponse(supabase, cart_id, access.admin);
+    if (locked) return locked;
     const { error } = await supabase.from('cart_items').insert({
       cart_id: cart_id,
       product_id,
@@ -64,6 +72,8 @@ export const deleteCartItems = async (id: string) => {
 
     const access = await cartItemAccess(supabase, id);
     if (access.response) return access.response;
+    const locked = await posLockResponse(supabase, access.cartId, access.admin);
+    if (locked) return locked;
     const { error } = await supabase.from('cart_items').delete().eq('id', id);
 
     if (error) {
