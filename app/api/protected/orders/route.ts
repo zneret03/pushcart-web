@@ -13,6 +13,15 @@ export async function GET(req: NextRequest) {
   try {
     const supabase = await createClient();
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user?.id)
+      .maybeSingle();
+    const admin = !user?.is_anonymous && profile?.role === 'admin';
     const url = req.nextUrl.searchParams;
 
     const page = Number(url.get('page') || 1);
@@ -24,10 +33,11 @@ export async function GET(req: NextRequest) {
     const { data, error, count, totalPages, currentPage } =
       await paginatedData<Orders>({
         tableName: 'orders',
+        ownership: admin ? undefined : `user_id.eq.${user?.id}`,
         supabase,
         columns:
           'id, subtotal, profiles(id, first_name, last_name, middle_name), carts:cart_id!inner(id, status, cart_items(id, quantity, products(name, image_url, price, sku))), vat_amount, discount_amount, total_amount, created_at, updated_at',
-        search: { column: 'name', query: search },
+        search: search ? { column: 'id', query: search } : undefined,
         page,
         perPage,
         sortBy,

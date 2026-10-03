@@ -4,6 +4,7 @@ import {
   successResponse,
 } from '@/app/api/helpers/response';
 import { createClient } from '@/config';
+import { cartAccess } from '@/app/api/helpers/cart-access';
 import { isEmpty } from 'lodash';
 import { NextRequest } from 'next/server';
 import { editCart } from '@/app/api/model/cart';
@@ -15,6 +16,8 @@ export async function GET(
   try {
     const { id } = await params;
     const supabase = await createClient();
+    const access = await cartAccess(supabase, id);
+    if (access.response) return access.response;
 
     const { data, error } = await supabase
       .from('carts')

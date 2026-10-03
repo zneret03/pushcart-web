@@ -18,18 +18,17 @@ const cookiesInterceptor = async (req: InternalAxiosRequestConfig) => {
     const { cookies } = await import('next/headers');
     const cookiesString = await cookies();
 
-    cookiesString
+    req.headers.cookie = cookiesString
       .getAll()
       .map((item) => `${item.name}=${item.value}`)
       .join('; ');
-
-    req.headers.cookie = cookiesString;
   }
   return req;
 };
 
 export const axiosService = axios.create({
-  baseURL: baseUrl,
+  // Browser requests belong to the origin serving the tablet, not a build-time URL.
+  baseURL: isServer ? baseUrl : undefined,
 });
 
 axiosService.interceptors.request.use(logInterceptor);

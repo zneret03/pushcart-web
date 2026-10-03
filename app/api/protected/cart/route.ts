@@ -1,5 +1,9 @@
 import { NextRequest } from 'next/server';
-import { generalErrorResponse, successResponse } from '../../helpers/response';
+import {
+  generalErrorResponse,
+  successResponse,
+  unauthorizedResponse,
+} from '../../helpers/response';
 import { createClient } from '@/config';
 
 export async function GET(req: NextRequest) {
@@ -9,10 +13,24 @@ export async function GET(req: NextRequest) {
 
     const supabase = await createClient();
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return unauthorizedResponse();
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+    const admin = !user.is_anonymous && profile?.role === 'admin';
+
     let query = supabase
       .from('carts')
       .select('id, code_token, user_id, created_at')
       .eq('status', 'unpaid');
+
+    if (!admin)
+      query = query.or(`customer_id.eq.${user.id},user_id.eq.${user.id}`);
 
     if (search) {
       query = query.ilike('code_token', `%${search}%`);
@@ -22,8 +40,7 @@ export async function GET(req: NextRequest) {
 
     if (error) {
       console.error(error.message);
-      generalErrorResponse({ error: error.message });
-      return;
+      return generalErrorResponse({ error: error.message });
     }
 
     return successResponse({

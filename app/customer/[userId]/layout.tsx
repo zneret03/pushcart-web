@@ -25,7 +25,15 @@ export default async function CustomerLayout({
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <AuthProvider>{children}</AuthProvider>
+          {/*
+            `requireUser={false}`: this subtree is the customer-facing surface, and its entry point
+            is the shared counter tablet at `/customer/guest/scan-start`. That screen signs an
+            anonymous customer in itself, so it has to render for a visitor with no session - with
+            the default it sat behind the provider's spinner and its Start shopping button could
+            never be reached. The pages below still talk to session-protected routes, which is what
+            actually gates the data.
+          */}
+          <AuthProvider requireUser={false}>{children}</AuthProvider>
         </div>
       </SidebarInset>
     </SidebarProvider>

@@ -17,6 +17,7 @@ interface PaginatedData {
     tableId: string;
   } | null;
   limit?: number;
+  ownership?: string;
 }
 
 export const paginatedData = async <TData>({
@@ -30,6 +31,7 @@ export const paginatedData = async <TData>({
   specificTable,
   sortOrder = 'asc',
   limit,
+  ownership,
 }: PaginatedData): Promise<{
   data: TData[] | null;
   error: PostgrestError | null;
@@ -41,6 +43,8 @@ export const paginatedData = async <TData>({
     .from(tableName)
     .select(columns, { count: 'exact' })
     .is('archived_at', null);
+
+  if (ownership) query = query.or(ownership);
 
   if (limit) {
     query = query.limit(limit);

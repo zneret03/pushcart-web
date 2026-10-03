@@ -1,13 +1,15 @@
 import { generalErrorResponse, successResponse } from '../helpers/response';
 import { createClient } from '@/config';
+import { cartAccess, cartItemAccess } from '../helpers/cart-access';
 
 export const editCartItems = async (
   data: { [key: string]: string | Date },
   id: string,
 ) => {
   try {
-    console.log(data, id);
     const supabase = await createClient();
+    const access = await cartItemAccess(supabase, id);
+    if (access.response) return access.response;
 
     const { error } = await supabase
       .from('cart_items')
@@ -35,6 +37,8 @@ export const addToCart = async (args: {
     const { cartId: cart_id, productId: product_id } = args;
     const supabase = await createClient();
 
+    const access = await cartAccess(supabase, cart_id);
+    if (access.response) return access.response;
     const { error } = await supabase.from('cart_items').insert({
       cart_id: cart_id,
       product_id,
@@ -58,6 +62,8 @@ export const deleteCartItems = async (id: string) => {
   try {
     const supabase = await createClient();
 
+    const access = await cartItemAccess(supabase, id);
+    if (access.response) return access.response;
     const { error } = await supabase.from('cart_items').delete().eq('id', id);
 
     if (error) {

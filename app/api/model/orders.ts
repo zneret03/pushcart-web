@@ -1,12 +1,25 @@
 import { generalErrorResponse, successResponse } from '../helpers/response';
-import { createClient } from '@/config';
+import { createClient, createServiceClient } from '@/config';
+import { cartAccess } from '../helpers/cart-access';
+import { forbiddenResponse } from '../helpers/response';
 import { OrdersInsert } from '@/lib/types/Orders';
 
 export const addOrders = async (data: OrdersInsert) => {
   try {
     const supabase = await createClient();
 
-    const { error: cartsError } = await supabase
+    const access = await cartAccess(supabase, data.cart_id);
+    if (access.response) return access.response;
+    if (
+      !access.admin &&
+      (access.cart?.user_id !== access.user?.id ||
+        data.user_id !== access.user?.id)
+    )
+      return forbiddenResponse();
+
+    // Authorized cashier/admin path; direct customer order writes are denied by RLS.
+    const writer = createServiceClient();
+    const { error: cartsError } = await writer
       .from('carts')
       .update({
         status: 'paid',
@@ -17,7 +30,7 @@ export const addOrders = async (data: OrdersInsert) => {
       return generalErrorResponse({ error: cartsError.message });
     }
 
-    const { error: ordersError } = await supabase.from('orders').insert(data);
+    const { error: ordersError } = await writer.from('orders').insert(data);
 
     if (ordersError) {
       return generalErrorResponse({ error: ordersError.message });

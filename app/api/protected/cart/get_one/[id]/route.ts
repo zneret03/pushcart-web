@@ -3,6 +3,7 @@ import {
   successResponse,
 } from '@/app/api/helpers/response';
 import { createClient } from '@/config';
+import { cartAccess } from '@/app/api/helpers/cart-access';
 import { NextRequest } from 'next/server';
 
 export async function GET(
@@ -12,6 +13,8 @@ export async function GET(
   try {
     const { id } = await params;
     const supabase = await createClient();
+    const access = await cartAccess(supabase, id);
+    if (access.response) return access.response;
 
     const { data, error } = await supabase
       .from('carts')

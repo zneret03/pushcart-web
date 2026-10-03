@@ -1,6 +1,5 @@
 'use client';
 
-import { Users } from '@/lib/types/users';
 import { updateCart } from '@/services/cart/cart.services';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Check } from 'lucide-react';
 import { JSX } from 'react';
 
 interface ChooseCashierType {
-  userProfiles: Users[];
+  userProfiles: { id: string }[];
   cartId: string;
   currentCashier: string;
   userId: string;
@@ -29,7 +28,7 @@ export const ChooseCashier = ({
 
   return (
     <div className="flex items-center gap-2">
-      {userProfiles.map((item: Users, index: number) => (
+      {userProfiles.map((item, index: number) => (
         <Button
           variant={item.id === currentCashier ? 'default' : 'secondary'}
           key={item.id}

@@ -15,6 +15,7 @@ import { AlertTriangle } from 'lucide-react';
 import { anonymouslyLogin, signOut } from '@/services/auth/auth.services';
 import {
   getStations,
+  getMySession,
   openStationSession,
   PosApiError,
 } from '@/services/pos/pos.services';
@@ -32,7 +33,14 @@ export default function ScanStartPage(): JSX.Element {
       setMessage('');
 
       try {
-        // A previous customer's cookie must not be reused.
+        // A reload/back navigation must not strand the current customer's open cart.
+        const existing = await getMySession().catch(() => null);
+        if (existing) {
+          router.push(`/customer/guest/${existing.cart_id}/scan`);
+          return;
+        }
+
+        // No open checkout remains; create a fresh customer.
         try {
           await signOut();
         } catch {

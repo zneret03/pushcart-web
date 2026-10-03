@@ -15,11 +15,10 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { getProfiles } from '@/services/users/users.services';
+import { axiosService } from '@/app/api/axios-client';
 import { calculateCartTotal } from '@/app/user/[userId]/pos/helpers/calculateCartTotal';
 import { ChooseCashier } from './components/ChooseCashier';
 import { GoToCashier } from './components/GoToCashier';
-import { Users } from '@/lib/types/users';
 
 export default async function Shop({
   params,
@@ -37,15 +36,8 @@ export default async function Shop({
 
   const response = await getProducts(hasFilterCategory);
 
-  console.log(response);
-
-  const profilesResponse = await getProfiles(
-    `?page=1&perPage=100&sortBy=created_at`,
-  );
-
-  const userProfiles = profilesResponse.profiles.filter(
-    (item: Users) => item.role === 'user',
-  );
+  const profilesResponse = await axiosService.get('/api/protected/cashiers');
+  const userProfiles = profilesResponse.data.data as { id: string }[];
 
   const cartResponse = await getCartsById(cartId);
 

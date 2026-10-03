@@ -3,6 +3,7 @@ import {
   successResponse,
   conflictRequestResponse,
   badRequestResponse,
+  forbiddenResponse,
 } from '../helpers/response';
 import { getImagePath } from './image';
 import { uploadFileImage } from '../helpers/uploadImage';
@@ -125,6 +126,20 @@ export const revokeUser = async (
 export const updateUserInfo = async (data: FormData, id: string) => {
   try {
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return forbiddenResponse();
+    const { data: caller } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+    const admin = !user.is_anonymous && caller?.role === 'admin';
+    if (!admin && id !== user.id) return forbiddenResponse();
+    // Role is an authorization fact, never a field a customer may assign themselves.
+    if (!admin && data.get('role') && data.get('role') !== caller?.role)
+      return forbiddenResponse();
     const isEqualAvatar =
       data.get('oldAvatar') !== data.get('avatar_url') &&
       !!data.get('oldAvatar');
@@ -136,7 +151,7 @@ export const updateUserInfo = async (data: FormData, id: string) => {
     const last_name = data.get('last_name');
     const middle_name = data.get('middle_name');
     const address = data.get('address');
-    const role = data.get('role');
+    const role = admin ? data.get('role') : caller?.role;
 
     //remove old avatar
     if (isEqualAvatar) {
