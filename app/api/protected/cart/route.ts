@@ -9,26 +9,25 @@ export async function GET(req: NextRequest) {
 
     const supabase = await createClient();
 
-    let query = supabase
+    const { data, error } = await supabase
       .from('carts')
       .select('id, code_token, user_id, created_at')
       .eq('status', 'unpaid');
 
-    if (search) {
-      query = query.ilike('code_token', `%${search}%`);
-    }
-
-    const { data, error } = await query;
-
     if (error) {
       console.error(error.message);
-      generalErrorResponse({ error: error.message });
-      return;
+      return generalErrorResponse({ error: error.message });
     }
+
+    // code_token is a UUID column, which Postgres can't ILIKE, so match here
+    const keyword = search.trim().toLowerCase();
+    const carts = keyword
+      ? data.filter((cart) => cart.code_token.toLowerCase().includes(keyword))
+      : data;
 
     return successResponse({
       message: 'Successfully fetched cart',
-      data,
+      data: carts,
     });
   } catch (error) {
     const newError = error as Error;
