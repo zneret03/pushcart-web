@@ -21,7 +21,9 @@ export async function GET(
       .from('cart_items')
       .select(
         // product_id (and products.id) are what the tablet's per-product edit route keys on.
-        'id, product_id, carts:cart_id!inner(status), products(id, name, sku, price, stock_quantity, image_url, created_at), quantity, created_at',
+        // camera_lost_at is the desktop's lost-sight flag, stamped by pos_reconcile — the
+        // tablet renders it as the row's "camera lost this item" pending state.
+        'id, product_id, carts:cart_id!inner(status), products(id, name, sku, price, stock_quantity, image_url, created_at), quantity, camera_lost_at, created_at',
       )
       .eq('carts.status', status)
       .eq('cart_id', id);

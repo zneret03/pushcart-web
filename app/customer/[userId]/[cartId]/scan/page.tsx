@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   CameraOff,
   CheckCircle2,
+  EyeOff,
   KeyRound,
   ShieldAlert,
 } from 'lucide-react';
@@ -313,7 +314,9 @@ export default function ScanPage(): JSX.Element {
                       width={500}
                       height={500}
                       alt={item.products.name}
-                      className="h-16 w-16 rounded-lg object-cover"
+                      className={`h-16 w-16 rounded-lg object-cover ${
+                        item.camera_lost_at ? 'opacity-50' : ''
+                      }`}
                     />
                     <div>
                       <h2 className="text-lg font-bold">
@@ -322,6 +325,18 @@ export default function ScanPage(): JSX.Element {
                       <p className="text-gray-500">
                         ₱{item.products.price.toFixed(2)}
                       </p>
+                      {/* The camera stopped seeing this item, so its quantity is held by the
+                          desktop's floor rather than observed. Saying so keeps a row that would
+                          otherwise sit silently from reading as a vanish (spec §6). */}
+                      {item.camera_lost_at && (
+                        <p
+                          className="mt-1 flex items-center gap-1 text-xs font-medium text-amber-600"
+                          role="status"
+                        >
+                          <EyeOff className="h-3.5 w-3.5 shrink-0" />
+                          Camera lost this item — still in your cart
+                        </p>
+                      )}
                     </div>
                   </section>
 

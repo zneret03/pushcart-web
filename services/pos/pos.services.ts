@@ -74,6 +74,10 @@ export interface PosCartItem {
   id: string;
   product_id: string;
   quantity: number;
+  // When the camera last reported it could no longer account for this row (the desktop's
+  // `lost` flag, stamped by pos_reconcile). Non-null renders as the row's pending state:
+  // the item is still charged, but the camera no longer sees it. Older rows report nothing.
+  camera_lost_at?: string | null;
   products: {
     id: string;
     name: string;

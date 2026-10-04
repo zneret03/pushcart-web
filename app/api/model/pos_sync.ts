@@ -12,6 +12,11 @@ export interface PosSyncItem {
   class_name: string;
   quantity: number;
   max_confidence?: number;
+  // "The camera can no longer account for this item" (POS_INTEGRATION_SPEC §3.2). Sent only
+  // when true — with the desktop's count floor holding every quantity, this flag is the only
+  // way the tablet can tell a held row from a seen one. pos_reconcile stamps cart_items.
+  // camera_lost_at off it; absent once the camera sees the item again.
+  lost?: boolean;
 }
 
 export interface PosSyncPayload {

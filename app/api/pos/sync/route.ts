@@ -41,6 +41,11 @@ function validate(
     if (!Number.isInteger(item.quantity) || item.quantity < 1) {
       return { error: 'quantity must be an integer >= 1' };
     }
+    // pos_reconcile casts this with ::boolean, which throws (a 500) on anything Postgres cannot
+    // read as one — refuse it here as the 400 it is.
+    if (item.lost !== undefined && typeof item.lost !== 'boolean') {
+      return { error: 'lost must be a boolean' };
+    }
     if (seen.has(item.class_name)) {
       return { error: `duplicate class_name: ${item.class_name}` };
     }
