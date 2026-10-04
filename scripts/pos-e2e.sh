@@ -155,6 +155,28 @@ check "no-op sync -> 200" "$code" "200"
 rows="$(rest GET "cart_items?cart_id=eq.$CART&session_ref=not.is.null&select=id" | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>console.log(JSON.parse(d).length))')"
 check "no duplicate row" "$rows" "1"
 
+# --- the camera loses sight of the item, then sees it again ---------------
+# SCANnCART holds a posted quantity as a floor, so a taken item reads as `lost: true` rather
+# than as a lower count. pos_reconcile stamps camera_lost_at on the first such sync, leaves the
+# stamp (and last_activity_at) alone on repeats, and clears it the first sync without the flag.
+lost_at() { rest GET "cart_items?cart_id=eq.$CART&session_ref=not.is.null&select=camera_lost_at" | jqr '0.camera_lost_at'; }
+activity() { rest GET "station_sessions?session_ref=eq.$REF&select=last_activity_at" | jqr '0.last_activity_at'; }
+code="$(pos_sync "$REF" "[{\"class_name\":\"$CLASS\",\"quantity\":1,\"lost\":true}]")"
+check "lost sync -> 200" "$code" "200"
+stamp="$(lost_at)"
+[[ -n "$stamp" ]] && ok "camera_lost_at stamped" || bad "camera_lost_at not stamped"
+before_activity="$(activity)"
+sleep 1
+code="$(pos_sync "$REF" "[{\"class_name\":\"$CLASS\",\"quantity\":1,\"lost\":true}]")"
+check "repeated lost sync -> 200" "$code" "200"
+check "a repeat keeps the first stamp" "$(lost_at)" "$stamp"
+check "a repeat is not customer activity" "$(activity)" "$before_activity"
+code="$(pos_sync "$REF" "[{\"class_name\":\"$CLASS\",\"quantity\":1}]")"
+check "seen-again sync -> 200" "$code" "200"
+check "camera_lost_at cleared" "$(lost_at)" ""
+code="$(pos_sync "$REF" "[{\"class_name\":\"$CLASS\",\"quantity\":1,\"lost\":\"abc\"}]")"
+check "non-boolean lost -> 400" "$code" "400"
+
 # --- two classes map to one product are summed ---------------------------
 code="$(pos_sync "$REF" "[{\"class_name\":\"$CLASS\",\"quantity\":1},{\"class_name\":\"$CLASS2\",\"quantity\":2}]")"
 check "summed sync -> 200" "$code" "200"
