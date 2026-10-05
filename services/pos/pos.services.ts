@@ -236,6 +236,45 @@ export const deletePosStation = async (id: string) => {
   }
 };
 
+// ---------- staff code (admin) ----------
+export interface PosStaffPinStatus {
+  /** Where the code in force comes from: set here by an admin, the server's POS_STAFF_PIN, or none. */
+  source: 'admin' | 'server' | 'off';
+  updated_at: string | null;
+  server_fallback: boolean;
+}
+
+export const getPosStaffPin = async (): Promise<PosStaffPinStatus> => {
+  try {
+    const response = await axiosService.get('/api/protected/pos-staff-pin');
+    return response.data.data as PosStaffPinStatus;
+  } catch (e) {
+    return apiError(e);
+  }
+};
+
+export const setPosStaffPin = async (
+  pin: string,
+): Promise<PosStaffPinStatus> => {
+  try {
+    const response = await axiosService.put('/api/protected/pos-staff-pin', {
+      pin,
+    });
+    return response.data.data as PosStaffPinStatus;
+  } catch (e) {
+    return apiError(e);
+  }
+};
+
+export const clearPosStaffPin = async (): Promise<PosStaffPinStatus> => {
+  try {
+    const response = await axiosService.delete('/api/protected/pos-staff-pin');
+    return response.data.data as PosStaffPinStatus;
+  } catch (e) {
+    return apiError(e);
+  }
+};
+
 export const getPosMapping = async (): Promise<PosMappingRow[]> => {
   try {
     const response = await axiosService.get('/api/protected/pos-mapping');

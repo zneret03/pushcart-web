@@ -26,6 +26,7 @@ import {
   type PosUnmappedClass,
   getPosStations,
 } from '@/services/pos/pos.services';
+import { StaffCodeCard } from './StaffCodeCard';
 
 function errorText(error: unknown): string {
   if (error instanceof PosApiError) return error.message;
@@ -345,6 +346,8 @@ export default function PosMappingPage(): JSX.Element {
           </CardContent>
         </Card>
       </div>
+
+      <StaffCodeCard className="mt-4" />
 
       {/* Customer edits */}
       <Card className="mt-4 shadow-xs">

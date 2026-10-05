@@ -44,6 +44,25 @@ SCANnCART desktop camera talks to the token-authenticated routes below. Configur
 | --- | --- |
 | `POS_INGEST_SECRET` | Shared secret the desktop sends as `x-pos-token`. 32+ hex chars; must match SCANnCART's `posSecret`. Server-only — never prefix with `NEXT_PUBLIC_`. |
 | `POS_IDLE_CANCEL_MINUTES` | Optional. Minutes an open session may sit idle before the next *Start shopping* cancels it. Default `5`. |
+| `POS_STAFF_PIN` | Optional. The **default** staff code (4–8 digits), used only until an admin sets one in POS Mapping (below). Empty and no admin code = staff removal off. Server-only. |
+
+### Staff code
+
+Customers cannot edit a camera-managed cart. When the camera misses a removal, staff tap
+**Staff** on the cart tablet, enter the **staff code**, and tap **Remove 1** on the line. It can
+only lower a quantity, is logged (`pos_sync_log.kind = staff_edit`), and stops the camera
+managing that product for the rest of the session. Five wrong codes lock it on that cart for a minute.
+
+**Changing the code (no restart):** sign in as an admin → `/admin/<userId>/pos-mapping` →
+**Staff code** card → type the new code twice → **Set** / **Change**. It works on the tablet
+immediately. **Remove this code** returns to the server default (`POS_STAFF_PIN`), or turns staff
+removal off when there is none.
+
+The card shows which code is in force (*Set here*, *Server default* or *Off*) and when it
+changed, never the code itself: it is stored as a bcrypt hash in `pos_settings` (migration
+`20261005000000_pos_staff_pin.sql`), settable only by database functions that check
+`is_admin()`. A forgotten code is replaced, not recovered. Give the code to staff in person;
+do not write it into this repository.
 
 Routes:
 

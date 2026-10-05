@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'crypto';
 import { NextRequest } from 'next/server';
-import { createClient } from '@/config';
+import { createClient, createServiceClient } from '@/config';
 import { cartAccess } from '@/app/api/helpers/cart-access';
 import {
   forbiddenResponse,
@@ -9,8 +9,10 @@ import {
 import { staffRemove } from '@/app/api/model/pos_sync';
 
 // Staff lower a quantity on a camera-managed cart: the fallback for a removal the camera
-// could not see. Off unless POS_STAFF_PIN is set. The PIN is checked here, on the server,
-// and the function behind it is service-role only, so the tablet cannot skip this route.
+// could not see. The code is the one an admin set in POS Mapping (stored hashed in
+// pos_settings); with none set there, POS_STAFF_PIN is the fallback, and with neither the
+// removal is off. The code is checked here, on the server, and the function behind it is
+// service-role only, so the tablet cannot skip this route.
 //
 // Wrong PINs are throttled per cart: five misses lock that cart's staff removal for a
 // minute, which is enough to stop a customer guessing a short PIN at the counter.
@@ -24,15 +26,27 @@ function pinMatches(given: string, expected: string): boolean {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
+// The admin-set code wins; the environment's is used only when none is set.
+async function checkPin(pin: string): Promise<'off' | 'match' | 'mismatch'> {
+  const { data, error } = await createServiceClient().rpc(
+    'pos_check_staff_pin',
+    { p_pin: pin },
+  );
+  const row = (Array.isArray(data) ? data[0] : data) as
+    | { is_set?: boolean; matches?: boolean }
+    | null
+    | undefined;
+  if (!error && row?.is_set) return row.matches ? 'match' : 'mismatch';
+  const fallback = process.env.POS_STAFF_PIN ?? '';
+  if (!fallback) return 'off';
+  return pinMatches(pin, fallback) ? 'match' : 'mismatch';
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ productId: string }> },
 ) {
   const { productId } = await params;
-  const expected = process.env.POS_STAFF_PIN ?? '';
-  if (!expected) {
-    return forbiddenResponse({ error: 'staff_removal_disabled' });
-  }
 
   let body: unknown;
   try {
@@ -67,7 +81,11 @@ export async function POST(
   if (state && state.until > now) {
     return forbiddenResponse({ error: 'staff_pin_locked' });
   }
-  if (!pinMatches(pin, expected)) {
+  const verdict = await checkPin(pin);
+  if (verdict === 'off') {
+    return forbiddenResponse({ error: 'staff_removal_disabled' });
+  }
+  if (verdict !== 'match') {
     // A lock that has run out starts a fresh count rather than re-locking on the next miss.
     const expired =
       state !== undefined && state.until !== 0 && state.until <= now;
