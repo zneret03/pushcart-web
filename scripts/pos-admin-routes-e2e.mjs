@@ -8,7 +8,7 @@
 // one thing standing between a customer's anonymous tablet session and the station list, the
 // class mapping, every open session and the cancel button was each route's own check - which
 // is what this asserts, for an anonymous customer, a registered non-admin user and an admin.
-/* global fetch */
+/* global fetch, setTimeout */
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { URL } from 'node:url';
